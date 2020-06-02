@@ -11,7 +11,6 @@ console.log("it works");
 
 const config = JsonWriter.getConfig();
 
-/*
 config.files.forEach(file => {
     const fileName = path.basename(file.path);
     const newDest = `${tempDestination}\\${fileName}`
@@ -22,23 +21,24 @@ config.files.forEach(file => {
             .addListener("close", () => {
                 if (file.delete === true) {
                     //delete file
-                    console.log(`${file.path} has been moved, will be deleted`);
+                    console.log(`\t${file.path} has been moved, will be deleted`);
                     // FileMover.removeFile(file.path);
                 } else {
-                    console.log(`${file.path} won't be deleted`);
+                    console.log(`\t${file.path} won't be deleted`);
                 }
             })
     } else {
         if (file.delete === true) {
             //delete file
             console.log(`${file.path} will be deleted`);
-            // FileMover.removeFile(file.path);
+/*            FileMover.removeFile(file.path, ()=>{
+                console.log(`\tfile ${file.path} deleted`);
+            });*/
         } else {
             console.log(`${file.path} won't be moved or deleted... Why?`);
         }
     }
 });
-*/
 
 config.directories.forEach(directory => {
     const folderName = getCurrentFolderName(directory.path);
@@ -46,11 +46,16 @@ config.directories.forEach(directory => {
 
     if (directory.save === true) {
         //move it
-        FolderMover.moveFolder(directory.path, newDest)
-        //then
-        if (directory.delete === true) {
-            //delete it
-        }
+        FolderMover.moveFolder(directory.path, newDest, ()=>{
+            console.log(`\t${folderName} and its content has been moved`);
+            //then
+            if (directory.delete === true) {
+                //delete it
+                FolderMover.removeFolder(directory.path, ()=>{
+                    console.log(`\tfolder ${directory.path} deleted`);
+                })
+            }
+        });
     } else {
         if (directory.delete === true) {
             //only delete it

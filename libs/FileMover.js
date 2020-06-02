@@ -34,11 +34,12 @@ class FileMover {
     }
 }
 
-class FolderMover extends FileMover{
+class FolderMover extends FileMover {
     constructor() {
         if (new.target === FolderMover) {
             throw new Error("Cannot instanciate class FolderMover directly!")
         }
+        // only to stop the alerts
         super();
     }
 
@@ -46,38 +47,45 @@ class FolderMover extends FileMover{
      * move a folder and its content
      * @param {string} folderOrigin
      * @param {string} destination
+     * @param {Function?} cb
      */
-    static moveFolder(folderOrigin, destination) {
-        console.log(`Folder ${folderOrigin} will be moved to ${destination}`);
+    static moveFolder(folderOrigin, destination, cb) {
+        //folderOrigin will be moved to destination
         // create folder in destination
         fs.mkdir(destination, {recursive: true}, (err) => {
-            if (err) {
-                throw err;
-            }
-            console.log(`folder ${destination} created`);
-            // read folder content
+            if (err) throw err;
+
+            // read origin folder content
             fs.readdir(folderOrigin, (err, files) => {
-                if (err) {
-                    throw err;
-                }
+                if (err) throw err;
+
+                let filesCounter = files.length
 
                 files.forEach(file => {
                     const filePath = `${folderOrigin}\\${file}`;
 
-                    console.log(`check if ${filePath} is a directory or file`);
+                    // check if filePath is a directory or file
                     if (fs.lstatSync(filePath).isDirectory() === true) {
-                        // console.log("\tfolder to move", filePath);
                         // moveFolder for each folder
-                        this.moveFolder(filePath, `${destination}\\${file}`);
+                        this.moveFolder(filePath, `${destination}\\${file}`, () => {
+                            filesCounter--;
+
+                            if (filesCounter === 0) {
+                                cb && cb();
+                            }
+                        });
                     } else {
-                        // console.log("\tfile to move", filePath);
                         const fileName = path.basename(filePath);
                         const newDest = `${destination}\\${fileName}`;
                         // move each file in new folder destination
                         this.moveFile(filePath, newDest)
-                        /*.addListener("close", () => {
-                            console.log(`file ${filePath} has been moved`);
-                        })*/;
+                            .addListener("close", () => {
+                                filesCounter--;
+
+                                if (filesCounter === 0) {
+                                    cb && cb();
+                                }
+                            });
                     }
                 })
             });
@@ -85,12 +93,20 @@ class FolderMover extends FileMover{
     }
 
     /**
-     *
+     * remove a folder and its content
      * @param {string} path
-     * @param {Function?} cb
+     * @param {Function} cb
      */
-    static removeFolder (path, cb){
-        //@TODO
+    static removeFolder(path, cb) {
+        //@TODO: make it recursive
+        fs.rmdir(path,(err) => {
+            if (err) {
+                console.log(`folder ${path} not deleted`);
+                throw err;
+            }
+
+            cb && cb();
+        });
     }
 }
 
