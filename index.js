@@ -1,7 +1,8 @@
 const path = require("path");
 
 const {JsonWriter} = require("./libs/JsonWriter");
-const {FileMover} = require("./libs/FileMover");
+const {FileMover, FolderMover} = require("./libs/FileMover");
+const {getCurrentFolderName} = require("./libs/utils");
 
 const tempDestination = "D:\\Tests\\folder";
 const finalDestination = "D:\\Tests\\folder2";
@@ -10,6 +11,7 @@ console.log("it works");
 
 const config = JsonWriter.getConfig();
 
+/*
 config.files.forEach(file => {
     const fileName = path.basename(file.path);
     const newDest = `${tempDestination}\\${fileName}`
@@ -36,14 +38,15 @@ config.files.forEach(file => {
         }
     }
 });
+*/
 
 config.directories.forEach(directory => {
-    // const folderPathSplited = directory.path.split(path.sep);
-    // const folderName = folderPathSplited[folderPathSplited.length - 1];
+    const folderName = getCurrentFolderName(directory.path);
+    const newDest = `${tempDestination}${path.sep}${folderName}`
 
     if (directory.save === true) {
         //move it
-        FileMover.moveFolder(directory.path, tempDestination + "\\" + directory.folderName)
+        FolderMover.moveFolder(directory.path, newDest)
         //then
         if (directory.delete === true) {
             //delete it
@@ -52,7 +55,7 @@ config.directories.forEach(directory => {
         if (directory.delete === true) {
             //only delete it
         } else {
-            console.log(`${directory.folderName} won't be moved or deleted... Why?`);
+            console.log(`${folderName} won't be moved or deleted... Why?`);
         }
     }
 });

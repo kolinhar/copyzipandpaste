@@ -24,20 +24,22 @@
   "directories": [
     {
       "path": "C:\\Users\\rjuanes\\Pictures\\dossierTest1",
-      "folderName": "dossierTest1",
       "save": true,
       "delete": true
     },
     {
       "path": "C:\\Users\\rjuanes\\Pictures\\dossierTest2",
-      "folderName": "dossierTest2",
       "save": false,
       "delete": true
     },
     {
       "path": "C:\\Users\\rjuanes\\Pictures\\dossierTest3",
-      "folderName": "dossierTest3",
       "save": true,
+      "delete": false
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Pictures\\Camera Roll",
+      "save": false,
       "delete": false
     }
   ]
