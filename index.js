@@ -21,19 +21,14 @@ config.files.forEach(file => {
             .addListener("close", () => {
                 if (file.delete === true) {
                     //delete file
-                    console.log(`\t${file.path} has been moved, will be deleted`);
-                    // FileMover.removeFile(file.path);
-                } else {
-                    console.log(`\t${file.path} won't be deleted`);
+                    console.log(`\t${file.path} has been moved`);
+                    removeFile(file.path, ()=>{});
                 }
             })
     } else {
         if (file.delete === true) {
             //delete file
-            console.log(`${file.path} will be deleted`);
-/*            FileMover.removeFile(file.path, ()=>{
-                console.log(`\tfile ${file.path} deleted`);
-            });*/
+            removeFile(file.path, ()=>{});
         } else {
             console.log(`${file.path} won't be moved or deleted... Why?`);
         }
@@ -51,16 +46,39 @@ config.directories.forEach(directory => {
             //then
             if (directory.delete === true) {
                 //delete it
-                FolderMover.removeFolder(directory.path, ()=>{
-                    console.log(`\tfolder ${directory.path} deleted`);
-                })
+                removeFolder(directory.path, ()=>{})
             }
         });
     } else {
         if (directory.delete === true) {
             //only delete it
+            removeFolder(directory.path, ()=>{})
         } else {
-            console.log(`${folderName} won't be moved or deleted... Why?`);
+            console.log(`${directory.path} won't be moved or deleted... Why?`);
         }
     }
 });
+
+/**
+ *
+ * @param {string} filePath
+ * @param {Function?} cb
+ */
+function removeFile(filePath, cb) {
+    FileMover.removeFile(filePath, ()=>{
+        console.log(`\tfile ${filePath} deleted`);
+        cb && cb();
+    });
+}
+
+/**
+ *
+ * @param {string} folderPath
+ * @param {Function?} cb
+ */
+function removeFolder(folderPath, cb){
+    FolderMover.removeFolder(folderPath, ()=>{
+        console.log(`\tfolder ${folderPath} deleted`);
+        cb && cb();
+    })
+}

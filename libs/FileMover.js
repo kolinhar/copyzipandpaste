@@ -98,8 +98,7 @@ class FolderMover extends FileMover {
      * @param {Function} cb
      */
     static removeFolder(path, cb) {
-        //@TODO: make it recursive
-        fs.rmdir(path,(err) => {
+        fs.rmdir(path,{recursive: true},(err) => {
             if (err) {
                 console.log(`folder ${path} not deleted`);
                 throw err;
