@@ -1,17 +1,22 @@
 #! /usr/bin/env node
 "use strict";
 
-const {JsonWriter} = require("../libs/JsonWriter");
+const {JsonWriter} = require("./libs/JsonWriter");
 console.log("you are in CLI mode");
 const {program} = require('commander');
 program.version('0.0.1');
 
+console.log(process.argv);
+
 
 program.command("add <filePath>")
+    .option("-s, --save", "save target", false)
+    .option("-d, --deletion", "delete target", false)
     .description("add a file or folder to the config file")
-    .action((filePath) => {
-        console.log("add param filePath:", filePath);
-        JsonWriter.setNewPath(filePath);
+    .action((filePath, options) => {
+        console.log("add param filePath:", filePath, options.save, options.deletion);
+        const {save, deletion} = options;
+        JsonWriter.setNewPath(filePath, {save, deletion});
     });
 
 program.command("remove <filePath>")

@@ -14,28 +14,32 @@ class JsonWriter {
         return JSON.parse(fs.readFileSync(CONFIG_FILE_PATH).toString());
     }
 
-    static setNewPath(absolutePath) {
+    /**
+     *
+     * @param {string} absolutePath
+     * @param {{save: boolean, deletion: boolean}} options
+     */
+    static setNewPath(absolutePath, options) {
         if (fs.existsSync(absolutePath)) {
+            console.log(options);
             const json = this.getConfig();
+
+            const objectToAdd = {
+                path: absolutePath,
+                save: options.save,
+                delete: options.deletion
+            };
 
             if (fs.lstatSync(absolutePath).isDirectory()) {
                 /*if (!json.directories.filter(val => val === absolutePath)){
 
                 }*/
 
-                json.directories.push({
-                    path: absolutePath,
-                    save: true,
-                    delete: true
-                });
+                json.directories.push(objectToAdd);
             } else {
-                json.files.push({
-                    path: absolutePath,
-                    save: true,
-                    delete: true
-                });
+                json.files.push(objectToAdd);
             }
-            
+
             fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(json));
             console.log(`path ${absolutePath} added`);
         }
