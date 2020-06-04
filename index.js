@@ -5,12 +5,12 @@ const {JsonWriter} = require("./libs/JsonWriter");
 const {FileMover, FolderMover} = require("./libs/FileMover");
 const {getCurrentFolderName} = require("./libs/utils");
 
-const tempDestination = "D:\\Tests\\folder";
-const finalDestination = "D:\\Tests\\folder2";
-
 console.log("it works");
 
 const config = JsonWriter.getConfig();
+
+const tempDestination = config.workingFolder;
+const finalDestination = config.backupFolder;
 
 config.files.forEach(file => {
     const fileName = path.basename(file.path);

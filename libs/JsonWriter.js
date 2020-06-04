@@ -2,7 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const {absolutingPath} = require("./utils");
+const {absolutingPath, checkAbsolutePath} = require("./utils");
 
 const CONFIG_FILE_PATH = `${__dirname}\\..\\config\\files.json`;
 
@@ -15,7 +15,7 @@ class JsonWriter {
 
     /**
      * return config file in JSON
-     * @returns {JSON}
+     * @returns {{workingFolder: string, backupFolder: string, files: {path: string, save: boolean, delete: boolean}[], directories: {path: string, save: boolean, delete: boolean}[]}}
      */
     static getConfig() {
         return JSON.parse(fs.readFileSync(CONFIG_FILE_PATH).toString());
@@ -63,15 +63,27 @@ class JsonWriter {
      * @param {string} rawPath
      */
     static setCopyFolder(rawPath) {
-        //@TODO
+        const absolutePath = absolutingPath(rawPath);
+        checkAbsolutePath(absolutePath);
+
+        const config = this.getConfig();
+        config.workingFolder = absolutePath;
+        fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
+        console.log(`working folder setted to ${absolutePath}`);
     }
 
     /**
      * add/update the backup folder
      * @param {string} rawPath
      */
-    static setBackUpFolder(rawPath) {
-        //@TODO
+    static setBackupFolder(rawPath) {
+        const absolutePath = absolutingPath(rawPath);
+        checkAbsolutePath(absolutePath);
+
+        const config = this.getConfig();
+        config.backupFolder = absolutePath;
+        fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
+        console.log(`backup folder setted to ${absolutePath}`);
     }
 }
 

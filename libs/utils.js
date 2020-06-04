@@ -1,4 +1,6 @@
 "use strict";
+const fs = require("fs");
+
 const path = require("path");
 
 /**
@@ -23,5 +25,16 @@ function absolutingPath(rawPath) {
     return path.normalize(rawPath);
 }
 
+/**
+ * check if a path exists
+ * @param {string} absolutePath
+ */
+function checkAbsolutePath(absolutePath) {
+    if (!fs.existsSync(absolutePath)) {
+        throw "this path is not valid or doesn't exist";
+    }
+}
+
 exports.getCurrentFolderName = getCurrentFolderName;
 exports.absolutingPath = absolutingPath;
+exports.checkAbsolutePath = checkAbsolutePath;

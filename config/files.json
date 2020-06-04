@@ -42,5 +42,7 @@
       "save": false,
       "delete": false
     }
-  ]
+  ],
+  "workingFolder": "D:\\Tests\\folder",
+  "backupFolder": "D:\\Tests\\backUp"
 }

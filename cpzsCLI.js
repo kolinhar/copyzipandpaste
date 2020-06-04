@@ -21,6 +21,18 @@ program.command("add <filePath>")
         JsonWriter.setNewPath(filePath, {save, deletion});
     });
 
+program.command("setWF <filePath>")
+    .description("add or update the working folder where files and directories will be copied and zipped")
+    .action((filePath)=>{
+        JsonWriter.setCopyFolder(filePath);
+    });
+
+program.command("setBF <filePath>")
+    .description("add or update the backup folder where zipped files and directories will be sent")
+    .action((filePath)=>{
+        JsonWriter.setBackupFolder(filePath);
+    });
+
 program.command("remove <filePath>")
     .description("remove a file or folder to the config file")
     .action((filePath) => {
