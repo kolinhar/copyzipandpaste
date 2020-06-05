@@ -78,12 +78,36 @@ class JsonWriter {
      */
     static setBackupFolder(rawPath) {
         const absolutePath = absolutingPath(rawPath);
-        checkAbsolutePath(absolutePath);
 
         const config = this.getConfig();
         config.backupFolder = absolutePath;
         fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
         console.log(`backup folder setted to ${absolutePath}`);
+    }
+
+    /**
+     * delete an existing path from the configuration
+     * @param {string|number} rawPath
+     * @param {boolean} [isFile]
+     */
+    static delPath(rawPath, isFile) {
+        console.log("delPath", rawPath, isFile);
+        const config = this.getConfig();
+
+        if (typeof rawPath === "number") {
+            let objectType = (isFile ? "files" : "directories");
+
+            //filter on indix
+            config[objectType] = config[objectType].filter((val, ind) => ind !== rawPath)
+        } else {
+            const absolutePath = absolutingPath(rawPath)
+            let objectType = (fs.lstatSync(absolutePath).isDirectory() ? "directories" : "files");
+
+            //filter on path
+            config[objectType] = config[objectType].filter(pathObj => pathObj.path !== absolutePath);
+        }
+
+        fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
     }
 }
 
