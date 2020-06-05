@@ -14,6 +14,7 @@
   "author": "",
   "license": "WTFPL",
   "dependencies": {
-    "commander": "^5.1.0"
+    "commander": "^5.1.0",
+    "zip-a-folder": "0.0.12"
   }
 }

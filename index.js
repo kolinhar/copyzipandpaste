@@ -1,9 +1,11 @@
 "use strict";
 const path = require("path");
+const fs = require("fs");
+const zip = require("zip-a-folder");
 
 const {JsonWriter} = require("./libs/JsonWriter");
 const {FileMover, FolderMover} = require("./libs/FileMover");
-const {getCurrentFolderName} = require("./libs/utils");
+const {getCurrentFolderName, checkAbsolutePath} = require("./libs/utils");
 
 console.log("it works");
 
@@ -11,6 +13,24 @@ const config = JsonWriter.getConfig();
 
 const tempDestination = config.workingFolder;
 const finalDestination = config.backupFolder;
+
+let isZipped = false;
+
+const counter = {
+    files: config.files.length,
+    directories: config.directories.length,
+}
+
+try {
+    checkAbsolutePath(tempDestination);
+} catch (e){
+    fs.mkdirSync(tempDestination, {recursive: true});
+}
+try {
+    checkAbsolutePath(finalDestination);
+} catch (e){
+    fs.mkdirSync(finalDestination, {recursive: true});
+}
 
 config.files.forEach(file => {
     const fileName = path.basename(file.path);
@@ -23,15 +43,26 @@ config.files.forEach(file => {
                 if (file.delete === true) {
                     //delete file
                     console.log(`\t${file.path} has been moved`);
-                    removeFile(file.path, ()=>{});
+                    removeFile(file.path, () => {
+                        counter.files--;
+                        countDown(counter);
+                    });
+                } else {
+                    counter.files--;
+                    countDown(counter);
                 }
             })
     } else {
         if (file.delete === true) {
             //delete file
-            removeFile(file.path, ()=>{});
+            removeFile(file.path, () => {
+                counter.files--;
+                countDown(counter);
+            });
         } else {
             console.log(`${file.path} won't be moved or deleted... Why?`);
+            counter.files--;
+            countDown(counter);
         }
     }
 });
@@ -42,23 +73,36 @@ config.directories.forEach(directory => {
 
     if (directory.save === true) {
         //move it
-        FolderMover.moveFolder(directory.path, newDest, ()=>{
+        FolderMover.moveFolder(directory.path, newDest, () => {
             console.log(`\t${folderName} and its content has been moved`);
             //then
             if (directory.delete === true) {
                 //delete it
-                removeFolder(directory.path, ()=>{})
+                removeFolder(directory.path, () => {
+                    counter.directories--;
+                    countDown(counter);
+                })
+            } else {
+                counter.directories--;
+                countDown(counter);
             }
         });
     } else {
         if (directory.delete === true) {
             //only delete it
-            removeFolder(directory.path, ()=>{})
+            removeFolder(directory.path, () => {
+                counter.directories--;
+                countDown(counter);
+            })
         } else {
             console.log(`${directory.path} won't be moved or deleted... Why?`);
+            counter.directories--;
+            countDown(counter);
         }
     }
 });
+
+zipIt();
 
 /**
  *
@@ -66,7 +110,7 @@ config.directories.forEach(directory => {
  * @param {Function?} cb
  */
 function removeFile(filePath, cb) {
-    FileMover.removeFile(filePath, ()=>{
+    FileMover.removeFile(filePath, () => {
         console.log(`\tfile ${filePath} deleted`);
         cb && cb();
     });
@@ -77,9 +121,48 @@ function removeFile(filePath, cb) {
  * @param {string} folderPath
  * @param {Function?} cb
  */
-function removeFolder(folderPath, cb){
-    FolderMover.removeFolder(folderPath, ()=>{
+function removeFolder(folderPath, cb) {
+    FolderMover.removeFolder(folderPath, () => {
         console.log(`\tfolder ${folderPath} deleted`);
         cb && cb();
     })
+}
+
+function zipIt() {
+    if (isZipped) return;
+
+    console.log("ZIP");
+    zip.zipFolder(tempDestination, `${tempDestination}.zip`, err =>{
+        if (err) throw err;
+
+        console.log("zipped");
+        sendZip();
+    });
+    isZipped = true;
+}
+
+function sendZip() {
+    const dest = `${finalDestination}${path.sep}${getCurrentFolderName(tempDestination)}.zip`;
+    console.log("sending archive to", dest);
+
+    FileMover.moveFile(`${tempDestination}.zip`, dest).addListener("close", (path, cb)=>{
+        FileMover.removeFile(`${tempDestination}.zip`, ()=>{
+            console.log("zip file removed");
+        });
+        FolderMover.removeFolder(tempDestination, ()=>{
+            console.log("temp folder removed");
+        });
+        console.log("zip file sended");
+    });
+}
+
+/**
+ *
+ * @param {{files: number, directories: number}} counter
+ */
+function countDown(counter) {
+    console.log(counter);
+    if (counter.files === 0 && counter.directories === 0) {
+        zipIt();
+    }
 }

@@ -48,7 +48,7 @@ class FolderMover extends FileMover {
      * move a folder and its content
      * @param {string} folderOrigin
      * @param {string} destination
-     * @param {Function?} cb
+     * @param {Function} [cb]
      */
     static moveFolder(folderOrigin, destination, cb) {
         //folderOrigin will be moved to destination
@@ -96,10 +96,10 @@ class FolderMover extends FileMover {
     /**
      * remove a folder and its content
      * @param {string} path
-     * @param {Function} cb
+     * @param {Function} [cb]
      */
     static removeFolder(path, cb) {
-        fs.rmdir(path,{recursive: true},(err) => {
+        fs.rmdir(path, {recursive: true}, (err) => {
             if (err) {
                 console.log(`folder ${path} not deleted`);
                 throw err;
