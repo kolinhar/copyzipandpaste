@@ -13,7 +13,7 @@ program.command("add <filePath>")
     .option("-d, --deletion", "delete target", false)
     .description("add a file or folder to the config file")
     .action((filePath, options) => {
-        console.log("add param filePath:", filePath, options.save, options.deletion);
+        // console.log("add param filePath:", filePath, options.save, options.deletion);
         const {save, deletion} = options;
         /*
                 console.log(`process.cwd(): ${process.cwd()}`);
@@ -40,12 +40,11 @@ program.command("remove [filePath]")
     .option("-f", "it's a file", false)
     .description("remove a file or folder to the config file")
     .action((filePath, options) => {
-        //@TODO
         /*
-        * if [filepath] is given, it will be checked if it,s a fil or directory
+        * if [filepath] is given, it will be checked if it's a file or directory
         * if <index> is given, -f could be given if it's a file, if not it's a directory
         */
-        console.log("remove param filePath:", filePath);
+        // console.log("remove param filePath:", filePath);
         if (filePath !== undefined) {
             JsonWriter.delPath(filePath);
         } else {

@@ -7,7 +7,7 @@ const {JsonWriter} = require("./libs/JsonWriter");
 const {FileMover, FolderMover} = require("./libs/FileMover");
 const {getCurrentFolderName, checkAbsolutePath} = require("./libs/utils");
 
-console.log("it works");
+// console.log("it works");
 
 function cpzs() {
     const config = JsonWriter.getConfig();
