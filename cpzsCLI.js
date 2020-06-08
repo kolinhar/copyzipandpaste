@@ -1,12 +1,14 @@
 #! /usr/bin/env node
 "use strict";
 
+const fs = require("fs");
+
 const {program} = require('commander');
 const {cpzs} = require("./index")
 const {JsonWriter} = require("./libs/JsonWriter");
 
 const myNumberReg = /^\d{1,4}$/;
-program.version('0.0.1');
+program.version(JSON.parse(fs.readFileSync("./package.json").toString()).version);
 
 program.command("add <filePath>")
     .option("-s, --save", "save target", false)

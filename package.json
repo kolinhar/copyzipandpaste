@@ -1,6 +1,6 @@
 {
   "name": "cpzs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "copy, zip, delete and send it to an USB Key",
   "bin": {
     "cpzs": "cpzsCLI.js"
@@ -25,5 +25,5 @@
   "bugs": {
     "url": "https://github.com/kolinhar/copyzipandpaste/issues"
   },
-  "homepage": "https://github.com/kolinhar/copyzipandpaste#readme"
+  "homepage": "https://github.com/kolinhar/copyzipandpaste"
 }
