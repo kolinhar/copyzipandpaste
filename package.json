@@ -1,5 +1,5 @@
 {
-  "name": "@ordre-des-developpeurs/copyzipandpaste",
+  "name": "cpzs",
   "version": "1.0.0",
   "description": "copy, zip, delete and send it to an USB Key",
   "bin": {
