@@ -1,6 +1,6 @@
 {
   "name": "cpzs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "copy, zip, delete and send it to an USB Key",
   "bin": {
     "cpzs": "cpzsCLI.js"
