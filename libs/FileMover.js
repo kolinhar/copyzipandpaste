@@ -102,7 +102,7 @@ class FolderMover extends FileMover {
         fs.rmdir(path, {recursive: true}, (err) => {
             if (err) {
                 console.log(`folder ${path} not deleted`);
-                throw err;
+                // throw err;
             }
 
             cb && cb();

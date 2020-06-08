@@ -1,9 +1,11 @@
 #! /usr/bin/env node
 "use strict";
-const myNumberReg = /^\d{1,4}$/;
 
-const {JsonWriter} = require("./libs/JsonWriter");
 const {program} = require('commander');
+const {cpzs} = require("./index")
+const {JsonWriter} = require("./libs/JsonWriter");
+
+const myNumberReg = /^\d{1,4}$/;
 program.version('0.0.1');
 
 program.command("add <filePath>")
@@ -73,11 +75,12 @@ program.command("getConfig")
         console.table(config.directories);
     });
 
-program.command("cpzs")
-    .description("do its job")
+program.command("go")
+    .description("do the job")
     .action(() => {
         //@TODO
         console.log("Let's the hack begin");
+        cpzs();
     });
 
 program.parse(process.argv);
