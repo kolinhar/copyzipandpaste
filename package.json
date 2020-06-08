@@ -1,6 +1,6 @@
 {
-  "name": "copyzipandpaste",
-  "version": "0.0.1",
+  "name": "@ordre-des-developpeurs/copyzipandpaste",
+  "version": "1.0.0",
   "description": "copy, zip, delete and send it to an USB Key",
   "bin": {
     "cpzs": "cpzsCLI.js"
@@ -11,10 +11,19 @@
     "start": "node index.js --verbose"
   },
   "keywords": [],
-  "author": "",
+  "author": "kolinhar",
   "license": "WTFPL",
   "dependencies": {
     "commander": "^5.1.0",
     "zip-a-folder": "0.0.12"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kolinhar/copyzipandpaste.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kolinhar/copyzipandpaste/issues"
+  },
+  "homepage": "https://github.com/kolinhar/copyzipandpaste#readme"
 }
