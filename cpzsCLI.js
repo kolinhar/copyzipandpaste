@@ -77,11 +77,11 @@ program.command("getConfig")
     });
 
 program.command("go")
+    .option("-n, --dry-run", "run without deletion to check if everything works fine", false)
     .description("do the job")
-    .action(() => {
-        //@TODO
+    .action((options) => {
         console.log("Let's the hack begin");
-        cpzs();
+        cpzs(options.dryRun);
     });
 
 program.parse(process.argv);

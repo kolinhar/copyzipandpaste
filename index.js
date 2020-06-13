@@ -9,7 +9,11 @@ const {getCurrentFolderName, checkAbsolutePath} = require("./libs/utils");
 
 // console.log("it works");
 
-function cpzs() {
+/**
+ *
+ * @param {boolean} dryRun
+ */
+function cpzs(dryRun) {
     const config = JsonWriter.getConfig();
 
     const tempDestination = config.workingFolder;
@@ -41,9 +45,8 @@ function cpzs() {
             //move file
             FileMover.moveFile(file.path, newDest)
                 .addListener("close", () => {
-                    if (file.delete === true) {
+                    if (file.delete === true && dryRun === false) {
                         //delete file
-                        // console.log(`\t${file.path} has been moved`);
                         removeFile(file.path, () => {
                             counter.files--;
                             countDown(counter);
@@ -54,14 +57,13 @@ function cpzs() {
                     }
                 })
         } else {
-            if (file.delete === true) {
+            if (file.delete === true && dryRun === false) {
                 //delete file
                 removeFile(file.path, () => {
                     counter.files--;
                     countDown(counter);
                 });
             } else {
-                // console.log(`${file.path} won't be moved or deleted... Why?`);
                 counter.files--;
                 countDown(counter);
             }
@@ -77,7 +79,7 @@ function cpzs() {
             FolderMover.moveFolder(directory.path, newDest, () => {
                 // console.log(`\t${folderName} and its content has been moved`);
                 //then
-                if (directory.delete === true) {
+                if (directory.delete === true && dryRun === false) {
                     //delete it
                     removeFolder(directory.path, () => {
                         counter.directories--;
@@ -89,7 +91,7 @@ function cpzs() {
                 }
             });
         } else {
-            if (directory.delete === true) {
+            if (directory.delete === true && dryRun === false) {
                 //only delete it
                 removeFolder(directory.path, () => {
                     counter.directories--;
@@ -141,14 +143,14 @@ function cpzs() {
         const dest = `${finalDestination}${path.sep}${getCurrentFolderName(tempDestination)}.zip`;
         console.log("sending archive to", dest);
 
-        FolderMover.removeFolder(tempDestination, () => {
+        !dryRun && FolderMover.removeFolder(tempDestination, () => {
             console.log("temp folder removed");
         });
 
         FileMover.moveFile(`${tempDestination}.zip`, dest).addListener("close", (path, cb) => {
             console.log("zip file sended");
 
-            FileMover.removeFile(`${tempDestination}.zip`, () => {
+            !dryRun && FileMover.removeFile(`${tempDestination}.zip`, () => {
                 console.log("zip file removed");
             });
         });
