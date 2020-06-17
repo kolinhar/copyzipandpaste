@@ -8,7 +8,7 @@ const {cpzs} = require("./index")
 const {JsonWriter} = require("./libs/JsonWriter");
 
 const myNumberReg = /^\d{1,4}$/;
-program.version("1.0.2");
+program.version("1.0.3");
 
 program.command("add <filePath>")
     .option("-s, --save", "save target", false)

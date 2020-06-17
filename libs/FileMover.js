@@ -62,8 +62,14 @@ class FolderMover extends FileMover {
 
                 let filesCounter = files.length
 
+                // if it's an empty folder call the callback
+                if (filesCounter === 0) {
+                    cb && cb();
+                }
+
                 files.forEach(file => {
                     const filePath = `${folderOrigin}\\${file}`;
+                    namesTab.push(file);
 
                     // check if filePath is a directory or file
                     if (fs.lstatSync(filePath).isDirectory() === true) {
