@@ -69,7 +69,6 @@ class FolderMover extends FileMover {
 
                 files.forEach(file => {
                     const filePath = `${folderOrigin}\\${file}`;
-                    namesTab.push(file);
 
                     // check if filePath is a directory or file
                     if (fs.lstatSync(filePath).isDirectory() === true) {
