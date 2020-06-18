@@ -91,23 +91,24 @@ class JsonWriter {
      * @param {boolean} [isFile]
      */
     static delPath(rawPath, isFile) {
-        console.log("delPath", rawPath, isFile);
         const config = this.getConfig();
+        let objectType = "";
 
         if (typeof rawPath === "number") {
-            let objectType = (isFile ? "files" : "directories");
+            objectType = (isFile ? "files" : "directories");
 
             //filter on indix
             config[objectType] = config[objectType].filter((val, ind) => ind !== rawPath)
         } else {
             const absolutePath = absolutingPath(rawPath)
-            let objectType = (fs.lstatSync(absolutePath).isDirectory() ? "directories" : "files");
+            objectType = (fs.lstatSync(absolutePath).isDirectory() ? "directories" : "files");
 
             //filter on path
             config[objectType] = config[objectType].filter(pathObj => pathObj.path !== absolutePath);
         }
 
         fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
+        console.log(`path ${rawPath} removed from ${objectType}`);
     }
 }
 

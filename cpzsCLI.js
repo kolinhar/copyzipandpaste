@@ -8,20 +8,14 @@ const {cpzs} = require("./index")
 const {JsonWriter} = require("./libs/JsonWriter");
 
 const myNumberReg = /^\d{1,4}$/;
-program.version("1.0.3");
+program.version("1.0.4");
 
 program.command("add <filePath>")
     .option("-s, --save", "save target", false)
     .option("-d, --deletion", "delete target", false)
     .description("add a file or folder to the config file")
     .action((filePath, options) => {
-        // console.log("add param filePath:", filePath, options.save, options.deletion);
         const {save, deletion} = options;
-        /*
-                console.log(`process.cwd(): ${process.cwd()}`);
-                console.log(`__dirname: ${__dirname}`);
-                console.log(`__filename: ${__filename}`);
-        */
         JsonWriter.setNewPath(filePath, {save, deletion});
     });
 
@@ -54,11 +48,7 @@ program.command("remove [filePath]")
 
             if (myNumberReg.test(I) === false) throw "invalid index, must be between 0 and 9999";
 
-            const newOptions = {
-                isFile: F
-            }
-
-            JsonWriter.delPath(parseInt(I, 10), newOptions);
+            JsonWriter.delPath(parseInt(I, 10), F);
         }
     });
 
