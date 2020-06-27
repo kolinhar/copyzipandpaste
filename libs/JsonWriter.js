@@ -1,10 +1,10 @@
 "use strict";
 const fs = require("fs");
-const path = require("path");
+const {configFilePath} = require("../config/constants");
 
 const {absolutingPath, checkAbsolutePath} = require("./utils");
 
-const CONFIG_FILE_PATH = `${__dirname}\\..\\config\\files.json`;
+const CONFIG_FILE_PATH = `${__dirname}\\..${configFilePath}`;
 
 class JsonWriter {
     constructor() {

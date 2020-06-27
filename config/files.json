@@ -1,6 +1,48 @@
 {
-  "files": [],
-  "directories": [],
-  "workingFolder": "",
-  "backupFolder": ""
+  "files": [
+    {
+      "path": "C:\\Users\\rjuanes\\Pictures\\marco from tropojaBIS.jpg",
+      "save": true,
+      "delete": true
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Pictures\\how-to-become-a-better-developer-NBBIS.jpg",
+      "save": false,
+      "delete": true
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Pictures\\MjolnirBIS.png",
+      "save": true,
+      "delete": false
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Pictures\\Earth's_City_Lights_by_DMSP,_1994-1995_(large).jpg",
+      "save": false,
+      "delete": false
+    }
+  ],
+  "directories": [
+    {
+      "path": "C:\\Users\\rjuanes\\Pictures\\dossierTest1",
+      "save": true,
+      "delete": true
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Pictures\\dossierTest2",
+      "save": false,
+      "delete": true
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Pictures\\dossierTest3",
+      "save": true,
+      "delete": false
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Pictures\\Camera Roll",
+      "save": false,
+      "delete": false
+    }
+  ],
+  "workingFolder": "D:\\Tests\\folder",
+  "backupFolder": "D:\\Tests\\backUp"
 }

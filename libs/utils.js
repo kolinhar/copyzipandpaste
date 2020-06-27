@@ -20,6 +20,7 @@ function getCurrentFolderName(folderPath) {
  */
 function absolutingPath(rawPath) {
     if (path.isAbsolute(rawPath) === false) {
+        console.log("not absolute");
         return path.join(process.cwd(), path.normalize(rawPath));
     }
     return path.normalize(rawPath);
