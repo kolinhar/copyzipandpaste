@@ -24,5 +24,11 @@
   "bugs": {
     "url": "https://github.com/kolinhar/copyzipandpaste/issues"
   },
-  "homepage": "https://github.com/kolinhar/copyzipandpaste"
+  "homepage": "https://github.com/kolinhar/copyzipandpaste",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "cls && mocha"
+  }
 }

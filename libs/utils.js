@@ -12,6 +12,16 @@ function getCurrentFolderName(folderPath) {
     const folderPathSplited = folderPath.split(path.sep);
     return folderPathSplited[folderPathSplited.length - 1];
 }
+/**
+ * get the last directory of a path
+ * @param {string} filePath
+ * @returns {*|string}
+ */
+function getCurrentFolderNameFromFilePath(filePath) {
+    const filePathSplited = filePath.split(path.sep);
+    filePathSplited.pop();
+    return filePathSplited.join(path.sep);
+}
 
 /**
  * normalizes path and makes it absolute
@@ -39,3 +49,4 @@ function checkAbsolutePath(absolutePath) {
 exports.getCurrentFolderName = getCurrentFolderName;
 exports.absolutingPath = absolutingPath;
 exports.checkAbsolutePath = checkAbsolutePath;
+exports.getCurrentFolderNameFromFilePath = getCurrentFolderNameFromFilePath;

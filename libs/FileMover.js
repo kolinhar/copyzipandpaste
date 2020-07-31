@@ -1,6 +1,7 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
+const {getCurrentFolderNameFromFilePath} = require("./utils");
 
 class FileMover {
     constructor() {
@@ -13,24 +14,51 @@ class FileMover {
      * (async) move a file
      * @param {string} file
      * @param  {string} destination
-     * @returns {WriteStream}
+     * @returns {Promise}
      */
     static moveFile(file, destination) {
-        return fs.createReadStream(file).pipe(fs.createWriteStream(destination));
+        return new Promise((resolve, reject) => {
+            const folderDest = getCurrentFolderNameFromFilePath(destination);
+
+            // console.log(`folderDest: ${folderDest}`);
+
+            fs.access(file, err => {
+                if (err) {
+                    reject(new Error(`file ${file} doesn't exist`));
+                } else {
+                    fs.access(folderDest, err => {
+                        if (err) {
+                            reject(new Error(`destination ${folderDest} doesn't exist`));
+                        } else {
+                            fs.createReadStream(file)
+                                .pipe(fs.createWriteStream(destination))
+                                .addListener("error", (err) => {
+                                    reject(err);
+                                })
+                                .addListener("close", () => {
+                                    resolve();
+                                });
+                        }
+                    });
+                }
+            });
+        });
     }
 
     /**
      * (async) delete a file
      * @param {string} file
-     * @param {Function?} cb
+     * @returns {Promise}
      */
-    static removeFile(file, cb) {
-        fs.unlink(file, (err) => {
-            if (err) {
-                console.log(`file ${file} not deleted`, err);
-                return;
-            }
-            cb && cb();
+    static removeFile(file) {
+        return new Promise((resolve, reject) => {
+            fs.unlink(file, (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
         });
     }
 }
