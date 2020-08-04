@@ -9,7 +9,7 @@ const filePathUnexistingFile = __dirname + path.sep + "someUnexistingFile.nope";
 const fileDestExistingFile = __dirname + `${path.sep}somewhere${path.sep}test-copy.js`;
 
 exports.removeFile = describe('FileMover.removeFile', function () {
-    it("should throw error", () => {
+    it("should reject Promise", () => {
         assert.rejects(FileMover.removeFile(filePathUnexistingFile),
             {message: `ENOENT: no such file or directory, unlink '${filePathUnexistingFile}'`});
     });

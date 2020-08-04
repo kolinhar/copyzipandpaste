@@ -1,7 +1,7 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
-const {getCurrentFolderNameFromFilePath} = require("./utils");
+const {getCurrentPathFromFilePath} = require("./utils");
 
 class FileMover {
     constructor() {
@@ -18,7 +18,7 @@ class FileMover {
      */
     static moveFile(file, destination) {
         return new Promise((resolve, reject) => {
-            const folderDest = getCurrentFolderNameFromFilePath(destination);
+            const folderDest = getCurrentPathFromFilePath(destination);
 
             // console.log(`folderDest: ${folderDest}`);
 

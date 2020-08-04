@@ -5,7 +5,7 @@ const zip = require("zip-a-folder");
 
 const {JsonWriter} = require("./libs/JsonWriter");
 const {FileMover, FolderMover} = require("./libs/FileMover");
-const {getCurrentFolderName, checkAbsolutePath} = require("./libs/utils");
+const {getCurrentFolderName, checkPath} = require("./libs/utils");
 
 /**
  *
@@ -25,12 +25,12 @@ function cpzs(dryRun) {
     }
 
     try {
-        checkAbsolutePath(tempDestination);
+        checkPath(tempDestination);
     } catch (e) {
         fs.mkdirSync(tempDestination, {recursive: true});
     }
     try {
-        checkAbsolutePath(finalDestination);
+        checkPath(finalDestination);
     } catch (e) {
         fs.mkdirSync(finalDestination, {recursive: true});
     }

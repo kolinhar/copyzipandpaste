@@ -2,7 +2,7 @@
 const fs = require("fs");
 const {configFilePath} = require("../config/constants");
 
-const {absolutingPath, checkAbsolutePath} = require("./utils");
+const {absolutingPath, checkPath} = require("./utils");
 
 const CONFIG_FILE_PATH = `${__dirname}\\..${configFilePath}`;
 
@@ -64,7 +64,7 @@ class JsonWriter {
      */
     static setCopyFolder(rawPath) {
         const absolutePath = absolutingPath(rawPath);
-        checkAbsolutePath(absolutePath);
+        checkPath(absolutePath);
 
         const config = this.getConfig();
         config.workingFolder = absolutePath;
