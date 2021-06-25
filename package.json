@@ -10,7 +10,7 @@
   "author": "kolinhar",
   "license": "WTFPL",
   "dependencies": {
-    "commander": "^6.0.0",
+    "commander": "^8.0.0",
     "zip-a-folder": "0.0.12"
   },
   "devDependencies": {},
