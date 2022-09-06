@@ -11,7 +11,7 @@
   "license": "WTFPL",
   "dependencies": {
     "commander": "^9.4.0",
-    "zip-a-folder": "1.1.0"
+    "zip-a-folder": "1.1.5"
   },
   "devDependencies": {},
   "repository": {
