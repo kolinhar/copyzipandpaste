@@ -1,6 +1,8 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+// @TODO: why the fuck I need to import like this ?
+const JsonWriter = require('./JsonWriter');
 
 /**
  * get the last directory of a directory path
@@ -67,7 +69,25 @@ function checkPath(absolutePath) {
   });
 }
 
+function getConfigFromJSON() {
+  console.log('JsonWriter', JsonWriter);
+
+  // @TODO: and why the fuck I had to use it like that to make it fucking works properly ?
+  const config = JsonWriter.JsonWriter.getConfig();
+  console.table({
+    'Working Folder': config.workingFolder,
+    'Backup Folder': config.backupFolder,
+  });
+  console.log('\nFiles');
+  console.table(config.files);
+  console.log('\nDirectories');
+  console.table(config.directories);
+
+  // @TODO: check if there is a backup folder and if it exists
+}
+
 exports.getCurrentFolderName = getCurrentFolderName;
 exports.absolutingPath = absolutingPath;
 exports.checkPath = checkPath;
 exports.getCurrentPathFromFilePath = getCurrentPathFromFilePath;
+exports.getConfigFromJSON = getConfigFromJSON;

@@ -1,10 +1,13 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-
 const { absolutingPath, checkAbsolutePath } = require('./utils');
 
-const CONFIG_FILE_PATH = `${__dirname}${path.sep}..${configFilePath}`;
+const configFilePath = `files.json`;
+
+const CONFIG_FILE_PATH = path.resolve(
+  `${__dirname}${path.sep}..${path.sep}config${path.sep}${configFilePath}`
+);
 
 // @TODO
 const DEFAULT_CONFIG = `{
@@ -13,19 +16,12 @@ const DEFAULT_CONFIG = `{
   "workingFolder": "",
   "backupFolder": ""
 }`;
+
 class JsonWriter {
   constructor() {
     if (new.target === JsonWriter) {
       throw new Error('Cannot instanciate class JsonWriter directly!');
     }
-  }
-
-  /**
-   * return config file in JSON
-   * @returns {{workingFolder: string, backupFolder: string, files: {path: string, save: boolean, delete: boolean}[], directories: {path: string, save: boolean, delete: boolean}[]}}
-   */
-  static getConfig() {
-    return JSON.parse(fs.readFileSync(CONFIG_FILE_PATH).toString());
   }
 
   /**
@@ -130,7 +126,7 @@ class JsonWriter {
    * @returns {{workingFolder: string, backupFolder: string, files: {path: string, save: boolean, delete: boolean}[], directories: {path: string, save: boolean, delete: boolean}[]}}
    */
   static getConfig() {
-    return JSON.parse(fs.readFileSync(CONFIG_FILE_PATH).toString());
+    return fs.readFileSync(CONFIG_FILE_PATH).toJSON();
   }
 
   /**

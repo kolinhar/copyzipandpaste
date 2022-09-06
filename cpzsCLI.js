@@ -6,6 +6,7 @@
 const { program } = require('commander');
 const { cpzs } = require('./index');
 const { JsonWriter } = require('./libs/JsonWriter');
+const { getConfigFromJSON } = require('./libs/utils');
 
 const myNumberReg = /^\d{1,4}$/;
 program.version('1.0.4');
@@ -64,17 +65,7 @@ program
 program
   .command('getConfig')
   .description('get the all the config')
-  .action(() => {
-    const config = JsonWriter.getConfig();
-    console.table({
-      'Working folder': config.workingFolder,
-      'Backup Folder': config.backupFolder,
-    });
-    console.log('\nFiles');
-    console.table(config.files);
-    console.log('\nDirectories');
-    console.table(config.directories);
-  });
+  .action(getConfigFromJSON);
 
 program
   .command('go')
