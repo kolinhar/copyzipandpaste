@@ -2,6 +2,9 @@
   "name": "cpzs",
   "version": "1.0.4",
   "description": "copy, zip, delete and send it to a folder",
+  "scripts": {
+    "preinstall": "node ./preInstall.js"
+  },
   "bin": {
     "cpzs": "cpzsCLI.js"
   },
@@ -23,5 +26,11 @@
   "bugs": {
     "url": "https://github.com/kolinhar/copyzipandpaste/issues"
   },
-  "homepage": "https://github.com/kolinhar/copyzipandpaste"
+  "homepage": "https://github.com/kolinhar/copyzipandpaste",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "cls && mocha"
+  }
 }
