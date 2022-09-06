@@ -6,7 +6,9 @@
     "cpzs": "cpzsCLI.js"
   },
   "main": "index.js",
-  "keywords": [],
+  "keywords": [
+    "cli"
+  ],
   "author": "kolinhar",
   "license": "WTFPL",
   "dependencies": {

@@ -1,7 +1,7 @@
-"use strict";
-const fs = require("fs");
+'use strict';
+const fs = require('fs');
 
-const path = require("path");
+const path = require('path');
 
 /**
  * get the last directory of a path
@@ -9,8 +9,8 @@ const path = require("path");
  * @returns {*|string}
  */
 function getCurrentFolderName(folderPath) {
-    const folderPathSplited = folderPath.split(path.sep);
-    return folderPathSplited[folderPathSplited.length - 1];
+  const folderPathSplited = folderPath.split(path.sep);
+  return folderPathSplited[folderPathSplited.length - 1];
 }
 
 /**
@@ -19,10 +19,10 @@ function getCurrentFolderName(folderPath) {
  * @returns {string}
  */
 function absolutingPath(rawPath) {
-    if (path.isAbsolute(rawPath) === false) {
-        return path.join(process.cwd(), path.normalize(rawPath));
-    }
-    return path.normalize(rawPath);
+  if (path.isAbsolute(rawPath) === false) {
+    return path.join(process.cwd(), path.normalize(rawPath));
+  }
+  return path.normalize(rawPath);
 }
 
 /**
@@ -30,9 +30,9 @@ function absolutingPath(rawPath) {
  * @param {string} absolutePath
  */
 function checkAbsolutePath(absolutePath) {
-    if (!fs.existsSync(absolutePath)) {
-        throw "this path is not valid or doesn't exist";
-    }
+  if (!fs.existsSync(absolutePath)) {
+    throw "this path is not valid or doesn't exist";
+  }
 }
 
 exports.getCurrentFolderName = getCurrentFolderName;
