@@ -28,5 +28,8 @@
   "homepage": "https://github.com/kolinhar/copyzipandpaste",
   "directories": {
     "test": "test"
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0"
   }
 }

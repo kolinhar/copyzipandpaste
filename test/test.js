@@ -1,9 +1,7 @@
-const assert = require('assert');
-
 describe('FileMover class', function () {
-    require("./FileMoverClass/index");
+  require('./FileMoverClass/index');
 });
 
-describe('utils file', ()=>{
-    require("./utils");
+describe('utils file', () => {
+  require('./utils.test');
 });

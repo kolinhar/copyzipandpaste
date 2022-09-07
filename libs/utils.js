@@ -43,8 +43,6 @@ function getCurrentPathFromFilePath(filePath) {
  * @returns {string}
  */
 function absolutingPath(rawPath) {
-  // @TODO: refactorer l'utilisation avec Promise et vérifier si process.cwd() fonctionne comme prévu
-  // console.log(`process.cwd()=${process.cwd()}`);
   if (path.isAbsolute(rawPath) === false) {
     return path.join(process.cwd(), path.normalize(rawPath));
   }
@@ -57,7 +55,6 @@ function absolutingPath(rawPath) {
  * @returns {Promise}
  */
 function checkPath(absolutePath) {
-  // @TODO: refactorer l'utilisation avec Promise
   return new Promise((resolve, reject) => {
     fs.access(absolutePath, (err) => {
       if (err) {
@@ -70,8 +67,6 @@ function checkPath(absolutePath) {
 }
 
 function getConfigFromJSON() {
-  console.log('JsonWriter', JsonWriter);
-
   // @TODO: and why the fuck I had to use it like that to make it fucking works properly ?
   const config = JsonWriter.JsonWriter.getConfig();
   console.table({
