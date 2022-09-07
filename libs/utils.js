@@ -66,6 +66,20 @@ function checkPath(absolutePath) {
   });
 }
 
+/**
+ *
+ * @param {string} absolutePath
+ * @returns {boolean}
+ */
+function checkPathSync(absolutePath) {
+  try {
+    fs.accessSync(absolutePath);
+    return true;
+  } catch (_e) {
+    return false;
+  }
+}
+
 function getConfigFromJSON() {
   // @TODO: and why the fuck I had to use it like that to make it fucking works properly ?
   const config = JsonWriter.JsonWriter.getConfig();
@@ -84,5 +98,6 @@ function getConfigFromJSON() {
 exports.getCurrentFolderName = getCurrentFolderName;
 exports.absolutingPath = absolutingPath;
 exports.checkPath = checkPath;
+exports.checkPathSync = checkPathSync;
 exports.getCurrentPathFromFilePath = getCurrentPathFromFilePath;
 exports.getConfigFromJSON = getConfigFromJSON;

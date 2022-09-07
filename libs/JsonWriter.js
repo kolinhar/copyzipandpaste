@@ -1,26 +1,36 @@
 'use strict';
 const fs = require('fs');
-const path = require('path');
-const { absolutingPath, checkAbsolutePath } = require('./utils');
+const { absolutingPath, checkPath, checkPathSync } = require('./utils');
 
-const configFilePath = `files.json`;
-
-const CONFIG_FILE_PATH = path.resolve(
-  `${__dirname}${path.sep}..${path.sep}config${path.sep}${configFilePath}`
-);
-
-// @TODO
-const DEFAULT_CONFIG = `{
-  "files": [],
-  "directories": [],
-  "workingFolder": "",
-  "backupFolder": ""
-}`;
+// @TODO: put in a configuration file in ./config in order to get the CONFIG_FILE_PATH
+/*
+  do something like this:
+  create a js file and just write in it 'exports.CONFIG_FILE_PATH = [insert the right path here]'
+  then import it to avoid fs.readFileSync() each time
+  or find something better
+*/
+const { CONFIG_FILE_PATH } = require('../config/constants');
 
 class JsonWriter {
   constructor() {
     if (new.target === JsonWriter) {
       throw new Error('Cannot instanciate class JsonWriter directly!');
+    }
+  }
+
+  static CONFIG_FILE_PATH_INTERNAL = CONFIG_FILE_PATH;
+
+  /**
+   * set the configuration path file
+   * @param {string} filePath
+   */
+  static setConfigFilePath(filePath) {
+    const absolutedPath = absolutingPath(filePath);
+    if (checkPathSync(absolutedPath)) {
+      this.CONFIG_FILE_PATH_INTERNAL = filePath;
+      console.log(`config file path updated to ${absolutedPath}`);
+    } else {
+      console.log(`error, ${absolutedPath} is a bad path`);
     }
   }
 
@@ -59,7 +69,7 @@ class JsonWriter {
         console.log(`path ${absolutePath} added to ${objectType}`);
       }
 
-      fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(json));
+      fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(json));
     } else {
       console.log("this path is not valid or doesn't exist");
     }
@@ -71,11 +81,11 @@ class JsonWriter {
    */
   static setCopyFolder(rawPath) {
     const absolutePath = absolutingPath(rawPath);
-    checkAbsolutePath(absolutePath);
+    checkPath(absolutePath);
 
     const config = this.getConfig();
     config.workingFolder = absolutePath;
-    fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
+    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
     console.log(`working folder setted to ${absolutePath}`);
   }
 
@@ -88,7 +98,7 @@ class JsonWriter {
 
     const config = this.getConfig();
     config.backupFolder = absolutePath;
-    fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
+    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
     console.log(`backup folder setted to ${absolutePath}`);
   }
 
@@ -126,7 +136,9 @@ class JsonWriter {
    * @returns {{workingFolder: string, backupFolder: string, files: {path: string, save: boolean, delete: boolean}[], directories: {path: string, save: boolean, delete: boolean}[]}}
    */
   static getConfig() {
-    return fs.readFileSync(CONFIG_FILE_PATH).toJSON();
+    return JSON.parse(
+      fs.readFileSync(this.CONFIG_FILE_PATH_INTERNAL).toString()
+    );
   }
 
   /**
@@ -164,7 +176,7 @@ class JsonWriter {
         console.log(`path ${absolutePath} added to ${objectType}`);
       }
 
-      fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(json));
+      fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(json));
     } else {
       console.log("this path is not valid or doesn't exist");
     }
@@ -180,7 +192,7 @@ class JsonWriter {
 
     const config = this.getConfig();
     config.workingFolder = absolutePath;
-    fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
+    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
     console.log(`working folder setted to ${absolutePath}`);
   }
 
@@ -193,7 +205,7 @@ class JsonWriter {
 
     const config = this.getConfig();
     config.backupFolder = absolutePath;
-    fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
+    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
     console.log(`backup folder setted to ${absolutePath}`);
   }
 
@@ -225,7 +237,7 @@ class JsonWriter {
       );
     }
 
-    fs.writeFileSync(CONFIG_FILE_PATH, JSON.stringify(config));
+    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
     console.log(`path ${rawPath} removed from ${objectType}`);
   }
 }

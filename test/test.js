@@ -5,3 +5,7 @@ describe('FileMover class', function () {
 describe('utils file', () => {
   require('./utils.test');
 });
+
+describe('JsonWriter static class', () => {
+  require('./JsonWriter.test');
+});
