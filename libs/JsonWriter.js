@@ -1,6 +1,6 @@
 'use strict';
 const fs = require('fs');
-const { absolutingPath, checkPath, checkPathSync } = require('./utils');
+const { absolutingPath, checkPathSync } = require('./utils');
 
 // @TODO: put in a configuration file in ./config in order to get the CONFIG_FILE_PATH
 /*
@@ -30,7 +30,7 @@ class JsonWriter {
       this.CONFIG_FILE_PATH_INTERNAL = filePath;
       console.log(`config file path updated to ${absolutedPath}`);
     } else {
-      console.log(`error, ${absolutedPath} is a bad path`);
+      console.error(`cannot set working folder to ${absolutedPath}`);
     }
   }
 
@@ -76,137 +76,59 @@ class JsonWriter {
   }
 
   /**
-   * add/update the copy/zip folder
-   * @param {string} rawPath
-   */
-  static setCopyFolder(rawPath) {
-    const absolutePath = absolutingPath(rawPath);
-    checkPath(absolutePath);
-
-    const config = this.getConfig();
-    config.workingFolder = absolutePath;
-    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
-    console.log(`working folder setted to ${absolutePath}`);
-  }
-
-  /**
    * add/update the backup folder
    * @param {string} rawPath
    */
   static setBackupFolder(rawPath) {
     const absolutePath = absolutingPath(rawPath);
 
-    const config = this.getConfig();
-    config.backupFolder = absolutePath;
-    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
-    console.log(`backup folder setted to ${absolutePath}`);
+    if (checkPathSync(absolutePath)) {
+      const config = this.getConfig();
+      config.backupFolder = absolutePath;
+      fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
+      console.log(`backup folder setted to ${absolutePath}`);
+    } else {
+      console.error(`cannot set backup folder to ${absolutePath}`);
+    }
   }
 
   /**
-   * delete an existing path from the configuration
-   * @param {string|number} rawPath
-   * @param {boolean} [isFile]
+   * add/update the copy/zip folder
+   * @param {string} rawPath
    */
-  static delPath(rawPath, isFile) {
-    const config = this.getConfig();
-    let objectType = '';
+  static setCopyFolder(rawPath) {
+    const absolutePath = absolutingPath(rawPath);
 
-    if (typeof rawPath === 'number') {
-      objectType = isFile ? 'files' : 'directories';
-
-      //filter on indix
-      config[objectType] = config[objectType].filter(
-        (val, ind) => ind !== rawPath
-      );
+    if (checkPathSync(absolutePath)) {
+      const config = this.getConfig();
+      config.workingFolder = absolutePath;
+      fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
+      console.log(`working folder setted to ${absolutePath}`);
     } else {
-      const absolutePath = absolutingPath(rawPath);
-      objectType = fs.lstatSync(absolutePath).isDirectory()
-        ? 'directories'
-        : 'files';
-
-      //filter on path
-      config[objectType] = config[objectType].filter(
-        (pathObj) => pathObj.path !== absolutePath
-      );
+      console.error(`cannot set working folder to ${absolutePath}`);
     }
   }
 
   /**
    * return config file in JSON
-   * @returns {{workingFolder: string, backupFolder: string, files: {path: string, save: boolean, delete: boolean}[], directories: {path: string, save: boolean, delete: boolean}[]}}
+   * @returns {{
+   *  workingFolder: string,
+   *  backupFolder: string,
+   *  files: {
+   *    path: string,
+   *    save: boolean,
+   *    delete: boolean
+   *  }[],
+   *  directories: {
+   *    path: string,
+   *    save: boolean,
+   *    delete: boolean
+   *  }[]}}
    */
   static getConfig() {
     return JSON.parse(
       fs.readFileSync(this.CONFIG_FILE_PATH_INTERNAL).toString()
     );
-  }
-
-  /**
-   * add/update a path in the config file
-   * @param {string} rawPath
-   * @param {{save: boolean, deletion: boolean}} options
-   */
-  static setNewPath(rawPath, options) {
-    let absolutePath = absolutingPath(rawPath);
-
-    if (fs.existsSync(absolutePath)) {
-      const json = this.getConfig();
-      const objectToAdd = {
-        path: absolutePath,
-        save: options.save,
-        delete: options.deletion,
-      };
-
-      let objectType = fs.lstatSync(absolutePath).isDirectory()
-        ? 'directories'
-        : 'files';
-
-      const pathArray = json[objectType].find(
-        (val) => val.path === absolutePath
-      );
-
-      if (pathArray !== undefined) {
-        //if this path already exists update it
-        pathArray.save = options.save;
-        pathArray.delete = options.deletion;
-        console.log(`path ${absolutePath} updated`);
-      } else {
-        //or add it
-        json[objectType].push(objectToAdd);
-        console.log(`path ${absolutePath} added to ${objectType}`);
-      }
-
-      fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(json));
-    } else {
-      console.log("this path is not valid or doesn't exist");
-    }
-  }
-
-  /**
-   * add/update the copy/zip folder
-   * @param {string} rawPath
-   */
-  static setCopyFolder(rawPath) {
-    const absolutePath = absolutingPath(rawPath);
-    checkPath(absolutePath);
-
-    const config = this.getConfig();
-    config.workingFolder = absolutePath;
-    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
-    console.log(`working folder setted to ${absolutePath}`);
-  }
-
-  /**
-   * add/update the backup folder
-   * @param {string} rawPath
-   */
-  static setBackupFolder(rawPath) {
-    const absolutePath = absolutingPath(rawPath);
-
-    const config = this.getConfig();
-    config.backupFolder = absolutePath;
-    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
-    console.log(`backup folder setted to ${absolutePath}`);
   }
 
   /**
