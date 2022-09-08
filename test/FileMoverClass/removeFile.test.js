@@ -3,27 +3,27 @@ const fs = require('fs');
 const path = require('path');
 const { FileMover } = require('../../libs/FileMover');
 
-const filePathUnexistingFile = __dirname + path.sep + 'someUnexistingFile.nope';
+const filePathUnexisting = `${__dirname}${path.sep}someUnexistingFile.nope`;
 
-const fileDestExistingFile = __dirname + `${path.sep}test-copy.js`;
+const fileDestExisting = `${__dirname}${path.sep}test-copy.js`;
 
-fs.writeFileSync(fileDestExistingFile, 'Blablablablabla');
+fs.writeFileSync(fileDestExisting, 'Blablablablabla');
 
-exports.removeFile = describe('FileMover.removeFile', function () {
-  it('should reject Promise', () => {
-    assert.rejects(FileMover.removeFile(filePathUnexistingFile), {
-      message: `ENOENT: no such file or directory, unlink '${filePathUnexistingFile}'`,
+exports.removeFile = describe('FileMover.removeFile', () => {
+  it("should reject Promise because file doesn't exist", () => {
+    assert.rejects(FileMover.removeFile(filePathUnexisting), {
+      message: `ENOENT: no such file or directory, unlink '${filePathUnexisting}'`,
     });
   });
 
-  it('should do it', (done) => {
-    FileMover.removeFile(fileDestExistingFile)
+  it('delete a file', (done) => {
+    FileMover.removeFile(fileDestExisting)
       .then(() => {
-        fs.access(fileDestExistingFile, (err) => {
+        fs.access(fileDestExisting, (err) => {
           if (err) {
             assert.ok(true);
           } else {
-            assert.fail(`file ${fileDestExistingFile} not deleted`);
+            assert.fail(`file ${fileDestExisting} not deleted`);
           }
         });
       })
