@@ -8,16 +8,6 @@ const configPathFolder =
   'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\config\\dev';
 const configPathFolder2 = 'C:\\Users\\rjuanes\\Documents\\Dev';
 
-before(function () {
-  //silence the console
-  console.log = function () {};
-});
-
-after(function () {
-  //reset console
-  delete console.log;
-});
-
 beforeEach(() => {
   // reset config file to default value
   fs.writeFileSync(configPathFile, JSON.stringify(DEFAULT_CONFIG));
