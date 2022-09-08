@@ -20,28 +20,30 @@ class FileMover {
     return new Promise((resolve, reject) => {
       const folderDest = getCurrentPathFromFilePath(destination);
 
-      // console.log(`folderDest: ${folderDest}`);
-
-      fs.access(file, (err) => {
-        if (err) {
-          reject(new Error(`file ${file} doesn't exist`));
-        } else {
-          fs.access(folderDest, (err) => {
-            if (err) {
-              reject(new Error(`destination ${folderDest} doesn't exist`));
-            } else {
-              fs.createReadStream(file)
-                .pipe(fs.createWriteStream(destination))
-                .addListener('error', (err) => {
-                  reject(err);
-                })
-                .addListener('close', () => {
-                  resolve();
-                });
-            }
-          });
-        }
-      });
+      if (folderDest) {
+        fs.access(file, (err) => {
+          if (err) {
+            reject(new Error(`file ${file} doesn't exist`));
+          } else {
+            fs.access(folderDest, (err) => {
+              if (err) {
+                reject(new Error(`destination ${folderDest} doesn't exist`));
+              } else {
+                fs.createReadStream(file)
+                  .pipe(fs.createWriteStream(destination))
+                  .addListener('error', (err) => {
+                    reject(err);
+                  })
+                  .addListener('close', () => {
+                    resolve();
+                  });
+              }
+            });
+          }
+        });
+      } else {
+        throw `path ${destination} invalid`;
+      }
     });
   }
 
@@ -112,7 +114,7 @@ class FolderMover extends FileMover {
             const fileName = path.basename(filePath);
             const newDest = `${destination}\\${fileName}`;
             // move each file in new folder destination
-            this.moveFile(filePath, newDest).addListener('close', () => {
+            this.moveFile(filePath, newDest).then(() => {
               filesCounter--;
 
               if (filesCounter === 0) {

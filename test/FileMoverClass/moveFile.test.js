@@ -1,8 +1,8 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const { getCurrentPathFromFilePath } = require('../../libs/utils');
-const { FileMover } = require('../../libs/FileMover');
+const { getCurrentPathFromFilePath } = require('../../src/libs/utils');
+const { FileMover } = require('../../src/libs/FileMover');
 
 const filePathUnexistingFile = __dirname + path.sep + 'someUnexistingFile.nope';
 const fileDestUnexistingFile =

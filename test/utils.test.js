@@ -4,7 +4,7 @@ const {
   getCurrentPathFromFilePath,
   checkPath,
   absolutingPath,
-} = require('../libs/utils');
+} = require('../src/libs/utils');
 
 describe('getCurrentFolderName', () => {
   it('should return the last folder of an absolute path', () => {

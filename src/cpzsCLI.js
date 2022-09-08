@@ -4,7 +4,7 @@
 // don't forget npm i and npm link before dev ;-)
 
 const { program } = require('commander');
-const { cpzs } = require('./index');
+const { cpzs } = require('../index');
 const { JsonWriter } = require('./libs/JsonWriter');
 const { getConfigFromJSON } = require('./libs/utils');
 

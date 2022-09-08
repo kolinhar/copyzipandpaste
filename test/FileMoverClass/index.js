@@ -1,2 +1,2 @@
-exports.moveFile = require('./moveFile.test');
-exports.removeFile = require('./removeFile.test');
+require('./moveFile.test');
+require('./removeFile.test');

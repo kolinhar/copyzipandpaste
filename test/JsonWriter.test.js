@@ -1,11 +1,11 @@
 const assert = require('assert');
 const fs = require('fs');
-const { JsonWriter } = require('../libs/JsonWriter');
-const { DEFAULT_CONFIG } = require('../config/constants');
+const { JsonWriter } = require('../src/libs/JsonWriter');
+const { DEFAULT_CONFIG } = require('../src/config/constants');
 const configPathFile =
-  'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\config\\dev\\files_sav.json';
+  'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\src\\config\\dev\\files_sav.json';
 const configPathFolder =
-  'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\config\\dev';
+  'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\src\\config\\dev';
 const configPathFolder2 = 'C:\\Users\\rjuanes\\Documents\\Dev';
 
 beforeEach(() => {
@@ -18,7 +18,7 @@ describe('JsonWriter tests', () => {
     it('check the default configuration path file', () => {
       assert.strictEqual(
         JsonWriter.CONFIG_FILE_PATH_INTERNAL,
-        'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\config\\files.json'
+        'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\src\\config\\files.json'
       );
     });
 
@@ -182,7 +182,7 @@ describe('JsonWriter tests', () => {
     });
 
     it('add a wrong working folder and log the error', () => {
-      JsonWriter.setCopyFolder('.\\here');
+      JsonWriter.setCopyFolder('.\\here it is');
       const { workingFolder } = JsonWriter.getConfig();
 
       assert.strictEqual(workingFolder, '');
@@ -206,7 +206,7 @@ describe('JsonWriter tests', () => {
     });
 
     it('add a wrong backup folder and log the error', () => {
-      JsonWriter.setBackupFolder('.\\here');
+      JsonWriter.setBackupFolder('.\\here it is');
       const { backupFolder } = JsonWriter.getConfig();
 
       assert.strictEqual(backupFolder, '');
