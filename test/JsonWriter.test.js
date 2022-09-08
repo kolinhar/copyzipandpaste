@@ -6,6 +6,7 @@ const configPathFile =
   'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\config\\dev\\files_sav.json';
 const configPathFolder =
   'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\config\\dev';
+const configPathFolder2 = 'C:\\Users\\rjuanes\\Documents\\Dev';
 
 before(function () {
   //silence the console
@@ -18,145 +19,207 @@ after(function () {
 });
 
 beforeEach(() => {
+  // reset config file to default value
   fs.writeFileSync(configPathFile, JSON.stringify(DEFAULT_CONFIG));
 });
 
 describe('JsonWriter tests', () => {
-  it('set configuration path file', () => {
-    JsonWriter.setConfigFilePath(configPathFile);
+  describe('configuration path file', () => {
+    it('check the default configuration path file', () => {
+      assert.strictEqual(
+        JsonWriter.CONFIG_FILE_PATH_INTERNAL,
+        'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\config\\files.json'
+      );
+    });
 
-    assert.strictEqual(JsonWriter.CONFIG_FILE_PATH_INTERNAL, configPathFile);
-  });
+    it('set configuration path file', () => {
+      JsonWriter.setConfigFilePath(configPathFile);
 
-  it('set a new file to save (true false)', () => {
-    JsonWriter.setNewPath(configPathFile, { save: true, deletion: false });
-    const { files } = JsonWriter.getConfig();
-
-    assert.deepStrictEqual(files[0], {
-      path: configPathFile,
-      save: true,
-      delete: false,
+      assert.strictEqual(JsonWriter.CONFIG_FILE_PATH_INTERNAL, configPathFile);
     });
   });
 
-  it('set a new file to save (false true)', () => {
-    JsonWriter.setNewPath(configPathFile, { save: false, deletion: true });
-    const { files } = JsonWriter.getConfig();
+  describe('file to save', () => {
+    it('set a new file to save (true false)', () => {
+      JsonWriter.setNewPath(configPathFile, { save: true, deletion: false });
+      const { files } = JsonWriter.getConfig();
 
-    assert.deepStrictEqual(files[0], {
-      path: configPathFile,
-      save: false,
-      delete: true,
+      assert.deepStrictEqual(files[0], {
+        path: configPathFile,
+        save: true,
+        delete: false,
+      });
+    });
+
+    it('set a new file to save (false true)', () => {
+      JsonWriter.setNewPath(configPathFile, { save: false, deletion: true });
+      const { files } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(files[0], {
+        path: configPathFile,
+        save: false,
+        delete: true,
+      });
+    });
+
+    it('set a new file to save (true true)', () => {
+      JsonWriter.setNewPath(configPathFile, { save: true, deletion: true });
+      const { files } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(files[0], {
+        path: configPathFile,
+        save: true,
+        delete: true,
+      });
+    });
+
+    it('set a new file to save (false false)', () => {
+      JsonWriter.setNewPath(configPathFile, { save: false, deletion: false });
+      const { files } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(files[0], {
+        path: configPathFile,
+        save: false,
+        delete: false,
+      });
+    });
+
+    it('remove a file from list', () => {
+      JsonWriter.setNewPath(configPathFile, { save: true, deletion: false });
+      JsonWriter.delPath(0, true);
+
+      const { files } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(files, []);
+    });
+
+    it('update a file from list', () => {
+      JsonWriter.setNewPath(configPathFile, { save: true, deletion: false });
+      JsonWriter.setNewPath(configPathFile, { save: false, deletion: true });
+
+      const { files } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(files[0], {
+        path: configPathFile,
+        save: false,
+        delete: true,
+      });
     });
   });
 
-  it('set a new file to save (true true)', () => {
-    JsonWriter.setNewPath(configPathFile, { save: true, deletion: true });
-    const { files } = JsonWriter.getConfig();
+  describe('folder to save', () => {
+    it('set a new folder to save (true false)', () => {
+      JsonWriter.setNewPath(configPathFolder, { save: true, deletion: false });
+      const { directories } = JsonWriter.getConfig();
 
-    assert.deepStrictEqual(files[0], {
-      path: configPathFile,
-      save: true,
-      delete: true,
+      assert.deepStrictEqual(directories[0], {
+        path: configPathFolder,
+        save: true,
+        delete: false,
+      });
+    });
+
+    it('set a new folder to save (false true)', () => {
+      JsonWriter.setNewPath(configPathFolder, { save: false, deletion: true });
+      const { directories } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(directories[0], {
+        path: configPathFolder,
+        save: false,
+        delete: true,
+      });
+    });
+
+    it('set a new folder to save (true true)', () => {
+      JsonWriter.setNewPath(configPathFolder, { save: true, deletion: true });
+      const { directories } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(directories[0], {
+        path: configPathFolder,
+        save: true,
+        delete: true,
+      });
+    });
+
+    it('set a new folder to save (false false)', () => {
+      JsonWriter.setNewPath(configPathFolder, { save: false, deletion: false });
+      const { directories } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(directories[0], {
+        path: configPathFolder,
+        save: false,
+        delete: false,
+      });
+    });
+
+    it('remove a folder from list', () => {
+      JsonWriter.setNewPath(configPathFolder, { save: true, deletion: false });
+      JsonWriter.delPath(0, false);
+
+      const { directories } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(directories, []);
+    });
+
+    it('update a folder from list', () => {
+      JsonWriter.setNewPath(configPathFolder, { save: true, deletion: false });
+      JsonWriter.setNewPath(configPathFolder, { save: false, deletion: true });
+
+      const { directories } = JsonWriter.getConfig();
+
+      assert.deepStrictEqual(directories[0], {
+        path: configPathFolder,
+        save: false,
+        delete: true,
+      });
     });
   });
 
-  it('set a new file to save (false false)', () => {
-    JsonWriter.setNewPath(configPathFile, { save: false, deletion: false });
-    const { files } = JsonWriter.getConfig();
+  describe('working folder', () => {
+    it('add a working folder', () => {
+      JsonWriter.setCopyFolder(configPathFolder);
+      const { workingFolder } = JsonWriter.getConfig();
 
-    assert.deepStrictEqual(files[0], {
-      path: configPathFile,
-      save: false,
-      delete: false,
+      assert.strictEqual(workingFolder, configPathFolder);
+    });
+
+    it('update a working folder', () => {
+      JsonWriter.setCopyFolder(configPathFolder);
+      JsonWriter.setCopyFolder(configPathFolder2);
+      const { workingFolder } = JsonWriter.getConfig();
+
+      assert.strictEqual(workingFolder, configPathFolder2);
+    });
+
+    it('add a wrong working folder and log the error', () => {
+      JsonWriter.setCopyFolder('.\\here');
+      const { workingFolder } = JsonWriter.getConfig();
+
+      assert.strictEqual(workingFolder, '');
     });
   });
 
-  it('remove a file from list', () => {
-    JsonWriter.setNewPath(configPathFile, { save: true, deletion: false });
-    JsonWriter.delPath(0, true);
+  describe('backup folder', () => {
+    it('add a backup folder', () => {
+      JsonWriter.setBackupFolder(configPathFolder);
+      const { backupFolder } = JsonWriter.getConfig();
 
-    const { files } = JsonWriter.getConfig();
-
-    assert.deepStrictEqual(files, []);
-  });
-
-  it('update a file from list', () => {
-    JsonWriter.setNewPath(configPathFile, { save: true, deletion: false });
-    JsonWriter.setNewPath(configPathFile, { save: false, deletion: true });
-
-    const { files } = JsonWriter.getConfig();
-
-    assert.deepStrictEqual(files[0], {
-      path: configPathFile,
-      save: false,
-      delete: true,
+      assert.strictEqual(backupFolder, configPathFolder);
     });
-  });
 
-  it('set a new folder to save (true false)', () => {
-    JsonWriter.setNewPath(configPathFolder, { save: true, deletion: false });
-    const { directories } = JsonWriter.getConfig();
+    it('update a backup folder', () => {
+      JsonWriter.setBackupFolder(configPathFolder);
+      JsonWriter.setBackupFolder(configPathFolder2);
+      const { backupFolder } = JsonWriter.getConfig();
 
-    assert.deepStrictEqual(directories[0], {
-      path: configPathFolder,
-      save: true,
-      delete: false,
+      assert.strictEqual(backupFolder, configPathFolder2);
     });
-  });
 
-  it('set a new folder to save (false true)', () => {
-    JsonWriter.setNewPath(configPathFolder, { save: false, deletion: true });
-    const { directories } = JsonWriter.getConfig();
+    it('add a wrong backup folder and log the error', () => {
+      JsonWriter.setBackupFolder('.\\here');
+      const { backupFolder } = JsonWriter.getConfig();
 
-    assert.deepStrictEqual(directories[0], {
-      path: configPathFolder,
-      save: false,
-      delete: true,
-    });
-  });
-
-  it('set a new folder to save (true true)', () => {
-    JsonWriter.setNewPath(configPathFolder, { save: true, deletion: true });
-    const { directories } = JsonWriter.getConfig();
-
-    assert.deepStrictEqual(directories[0], {
-      path: configPathFolder,
-      save: true,
-      delete: true,
-    });
-  });
-
-  it('set a new folder to save (false false)', () => {
-    JsonWriter.setNewPath(configPathFolder, { save: false, deletion: false });
-    const { directories } = JsonWriter.getConfig();
-
-    assert.deepStrictEqual(directories[0], {
-      path: configPathFolder,
-      save: false,
-      delete: false,
-    });
-  });
-
-  it('remove a folder from list', () => {
-    JsonWriter.setNewPath(configPathFolder, { save: true, deletion: false });
-    JsonWriter.delPath(0, false);
-
-    const { directories } = JsonWriter.getConfig();
-
-    assert.deepStrictEqual(directories, []);
-  });
-
-  it('update a folder from list', () => {
-    JsonWriter.setNewPath(configPathFolder, { save: true, deletion: false });
-    JsonWriter.setNewPath(configPathFolder, { save: false, deletion: true });
-
-    const { directories } = JsonWriter.getConfig();
-
-    assert.deepStrictEqual(directories[0], {
-      path: configPathFolder,
-      save: false,
-      delete: true,
+      assert.strictEqual(backupFolder, '');
     });
   });
 });
