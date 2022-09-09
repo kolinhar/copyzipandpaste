@@ -16,7 +16,7 @@ class FileMover {
    * @param  {string} destination
    * @returns {Promise}
    */
-  static moveFile(file, destination) {
+  static copyFile(file, destination) {
     return new Promise((resolve, reject) => {
       const folderDest = getCurrentPathFromFilePath(destination);
 
@@ -80,7 +80,7 @@ class FolderMover extends FileMover {
    * @param {string} destination
    * @param {Function} [cb]
    */
-  static moveFolder(folderOrigin, destination, cb) {
+  static copyFolder(folderOrigin, destination, cb) {
     //folderOrigin will be moved to destination
     // create folder in destination
     fs.mkdir(destination, { recursive: true }, (err) => {
@@ -98,23 +98,27 @@ class FolderMover extends FileMover {
         }
 
         files.forEach((file) => {
-          const filePath = `${folderOrigin}\\${file}`;
+          const filePath = `${folderOrigin}${path.sep}${file}`;
 
           // check if filePath is a directory or file
           if (fs.lstatSync(filePath).isDirectory() === true) {
             // moveFolder for each folder
-            this.moveFolder(filePath, `${destination}\\${file}`, () => {
-              filesCounter--;
+            this.copyFolder(
+              filePath,
+              `${destination}${path.sep}${file}`,
+              () => {
+                filesCounter--;
 
-              if (filesCounter === 0) {
-                cb && cb();
+                if (filesCounter === 0) {
+                  cb && cb();
+                }
               }
-            });
+            );
           } else {
             const fileName = path.basename(filePath);
             const newDest = `${destination}\\${fileName}`;
             // move each file in new folder destination
-            this.moveFile(filePath, newDest).then(() => {
+            this.copyFile(filePath, newDest).then(() => {
               filesCounter--;
 
               if (filesCounter === 0) {
@@ -125,6 +129,8 @@ class FolderMover extends FileMover {
         });
       });
     });
+
+    fs.rename(folderOrigin, destination, cb);
   }
 
   /**
@@ -136,7 +142,6 @@ class FolderMover extends FileMover {
     fs.rmdir(path, { recursive: true }, (err) => {
       if (err) {
         console.log(`folder ${path} not deleted`);
-        // throw err;
       }
 
       cb && cb();

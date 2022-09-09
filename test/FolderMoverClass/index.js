@@ -1,1 +1,1 @@
-require('./moveFolder.test');
+require('./copyFolder.test');

@@ -1,2 +1,2 @@
-require('./moveFile.test');
+require('./copyFile.test');
 require('./removeFile.test');

@@ -17,13 +17,13 @@ const fileDestExistingFile =
 exports.moveFile = describe('FileMover.moveFile', function () {
   it('should reject promise file', () => {
     assert.rejects(
-      FileMover.moveFile(filePathUnexistingFile, fileDestExistingFile),
+      FileMover.copyFile(filePathUnexistingFile, fileDestExistingFile),
       { name: 'Error', message: `file ${filePathUnexistingFile} doesn't exist` }
     );
   });
 
   it('should reject promise destination', () => {
-    assert.rejects(FileMover.moveFile(__filename, fileDestUnexistingFile), {
+    assert.rejects(FileMover.copyFile(__filename, fileDestUnexistingFile), {
       name: 'Error',
       message: `destination ${fileDestUnexistingFolderDestination} doesn't exist`,
     });
@@ -31,7 +31,7 @@ exports.moveFile = describe('FileMover.moveFile', function () {
 
   it('should move a file', (done) => {
     assert
-      .doesNotReject(FileMover.moveFile(__filename, fileDestExistingFile))
+      .doesNotReject(FileMover.copyFile(__filename, fileDestExistingFile))
       .then(() => {
         fs.access(__filename, (err) => {
           if (err) {
