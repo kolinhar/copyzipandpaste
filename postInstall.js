@@ -10,7 +10,7 @@ child_process.exec('npm config get cpzsBackupFolder', null, (error, stdout) => {
   if (error) throw error;
 
   if (stdout) {
-    // /!\ as it come from CLI, it end with a '\n' character
+    // /!\ as it comes from CLI, it ends with a '\n' character
     stdout = stdout.split('\n')[0];
     console.log('config founded from npm', stdout);
     fs.createReadStream(stdout)
