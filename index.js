@@ -3,9 +3,9 @@ const path = require('path');
 const fs = require('fs');
 const zip = require('zip-a-folder');
 
-const { JsonWriter } = require('./libs/JsonWriter');
-const { FileMover, FolderMover } = require('./libs/FileMover');
-const { getCurrentFolderName, checkPath } = require('./libs/utils');
+const { JsonWriter } = require('./src/libs/JsonWriter');
+const { FileMover, FolderMover } = require('./src/libs/FileMover');
+const { getCurrentFolderName, checkPath } = require('./src/libs/utils');
 
 // console.log('it works');
 

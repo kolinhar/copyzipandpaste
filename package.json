@@ -6,7 +6,7 @@
     "test": "cls && mocha"
   },
   "bin": {
-    "cpzs": "cpzsCLI.js"
+    "cpzs": "./src/cpzsCLI.js"
   },
   "main": "index.js",
   "keywords": [
