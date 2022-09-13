@@ -8,7 +8,7 @@ const fileDestExisting = `${__dirname}${path.sep}test-copy.js`;
 
 fs.writeFileSync(fileDestExisting, 'Blablablablabla');
 
-exports.removeFile = describe('FileMover.removeFile', () => {
+describe('FileMover.removeFile', () => {
   it("should reject Promise because file doesn't exist", () => {
     assert.rejects(FileMover.removeFile(filePathUnexisting));
   });

@@ -14,7 +14,7 @@ const fileDestUnexistingFolderDestination = getCurrentPathFromFilePath(
 const fileDestExistingFile =
   __dirname + `${path.sep}somewhere${path.sep}test-copy.js`;
 
-exports.moveFile = describe('FileMover.moveFile', function () {
+describe('FileMover.moveFile', function () {
   it('should reject promise file', () => {
     assert.rejects(
       FileMover.copyFile(filePathUnexistingFile, fileDestExistingFile),
