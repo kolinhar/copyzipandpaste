@@ -22,15 +22,6 @@ program
   });
 
 program
-  .command('setWF <filePath>')
-  .description(
-    'add or update the working folder where files and directories will be copied and zipped'
-  )
-  .action((filePath) => {
-    JsonWriter.setCopyFolder(filePath);
-  });
-
-program
   .command('setBF <filePath>')
   .description(
     'add or update the backup folder where zipped files and directories will be sent'
@@ -53,12 +44,14 @@ program
     if (filePath !== undefined) {
       JsonWriter.delPath(filePath);
     } else {
-      const { I, F } = options;
+      const { i, f } = options;
 
-      if (myNumberReg.test(I) === false)
-        throw 'invalid index, must be between 0 and 9999';
+      if (myNumberReg.test(i) === false) {
+        console.log(`invalid index ${i}, it must be between 0 and 9999`);
+        return;
+      }
 
-      JsonWriter.delPath(parseInt(I, 10), F);
+      JsonWriter.delPath(parseInt(i, 10), f);
     }
   });
 

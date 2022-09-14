@@ -1,11 +1,12 @@
 'use strict';
 const path = require('path');
+const os = require('os');
 const fs = require('fs');
 const zip = require('zip-a-folder');
 
 const { JsonWriter } = require('./src/libs/JsonWriter');
 const { FileMover, FolderMover } = require('./src/libs/FileMover');
-const { getCurrentFolderName, checkPath } = require('./src/libs/utils');
+const { getCurrentFolderName, checkPathSync } = require('./src/libs/utils');
 
 // console.log('it works');
 
@@ -15,8 +16,7 @@ const { getCurrentFolderName, checkPath } = require('./src/libs/utils');
  */
 function cpzs(dryRun) {
   const config = JsonWriter.getConfig();
-
-  const tempDestination = config.workingFolder;
+  const tempDestination = fs.mkdtempSync(path.join(os.tmpdir(), 'cpzs-'));
   const finalDestination = config.backupFolder;
 
   let isCopied = false;
@@ -26,27 +26,20 @@ function cpzs(dryRun) {
     directories: config.directories.length,
   };
 
-  try {
-    checkPath(tempDestination);
-  } catch (e) {
-    fs.mkdirSync(tempDestination, { recursive: true });
-  }
-  try {
-    checkAbsolutePath(finalDestination);
-  } catch (e) {
-    fs.mkdirSync(finalDestination, { recursive: true });
+  if (!checkPathSync(finalDestination)) {
+    fs.mkdirSync(finalDestination);
   }
 
   config.files.forEach((file) => {
     const fileName = path.basename(file.path);
-    const newDest = `${tempDestination}\\${fileName}`;
+    const newDest = `${tempDestination}${path.sep}${fileName}`;
 
     if (file.save === true) {
       //move file
-      FileMover.moveFile(file.path, newDest).addListener('close', () => {
+      FileMover.copyFile(file.path, newDest).addListener('close', () => {
         if (file.delete === true && dryRun === false) {
           //delete file
-          removeFile(file.path, () => {
+          FileMover.removeFile(file.path, () => {
             counter.files--;
             countDown(counter);
           });
@@ -58,7 +51,7 @@ function cpzs(dryRun) {
     } else {
       if (file.delete === true && dryRun === false) {
         //delete file
-        removeFile(file.path, () => {
+        FileMover.removeFile(file.path, () => {
           counter.files--;
           countDown(counter);
         });
@@ -75,12 +68,12 @@ function cpzs(dryRun) {
 
     if (directory.save === true) {
       //move it
-      FolderMover.moveFolder(directory.path, newDest, () => {
-        // console.log(`\t${folderName} and its content has been moved`);
+      FolderMover.copyFolder(directory.path, newDest, () => {
+        console.log(`\t${folderName} and its content has been moved`);
         //then
         if (directory.delete === true && dryRun === false) {
           //delete it
-          removeFolder(directory.path, () => {
+          FolderMover.removeFolder(directory.path, () => {
             counter.directories--;
             countDown(counter);
           });
@@ -92,7 +85,7 @@ function cpzs(dryRun) {
     } else {
       if (directory.delete === true && dryRun === false) {
         //only delete it
-        removeFolder(directory.path, () => {
+        FolderMover.removeFolder(directory.path, () => {
           counter.directories--;
           countDown(counter);
         });
@@ -104,38 +97,17 @@ function cpzs(dryRun) {
     }
   });
 
-  /**
-   *
-   * @param {string} filePath
-   * @param {Function?} cb
-   */
-  function removeFile(filePath, cb) {
-    FileMover.removeFile(filePath, () => {
-      // console.log(`\tfile ${filePath} deleted`);
-      cb && cb();
-    });
-  }
-
-  /**
-   *
-   * @param {string} folderPath
-   * @param {Function?} cb
-   */
-  function removeFolder(folderPath, cb) {
-    FolderMover.removeFolder(folderPath, () => {
-      // console.log(`\tfolder ${folderPath} deleted`);
-      cb && cb();
-    });
-  }
-
   function zipIt() {
-    console.log('ZIP');
-    zip.ZipAFolder.zip(tempDestination, `${tempDestination}.zip`, (err) => {
-      if (err) throw err;
+    console.log('Zipping');
+    return zip.ZipAFolder.zip(
+      tempDestination,
+      `${tempDestination}.zip`,
+      (err) => {
+        if (err) throw err;
 
-      console.log('zipped');
-      sendZip();
-    });
+        console.log('zipped');
+      }
+    );
   }
 
   function sendZip() {
@@ -145,21 +117,18 @@ function cpzs(dryRun) {
     console.log('sending archive to', dest);
 
     !dryRun &&
-      FolderMover.removeFolder(tempDestination, () => {
+      FolderMover.removeFolder(tempDestination).then(() => {
         console.log('temp folder removed');
       });
 
-    FileMover.moveFile(`${tempDestination}.zip`, dest).addListener(
-      'close',
-      (path, cb) => {
-        console.log('zip file sended');
+    FileMover.copyFile(`${tempDestination}.zip`, dest).then(() => {
+      console.log('zip file sended');
 
-        !dryRun &&
-          FileMover.removeFile(`${tempDestination}.zip`, () => {
-            console.log('zip file removed');
-          });
-      }
-    );
+      !dryRun &&
+        FileMover.removeFile(`${tempDestination}.zip`, () => {
+          console.log('zip file removed from temp folder');
+        });
+    });
   }
 
   /**
@@ -173,7 +142,7 @@ function cpzs(dryRun) {
       console.log(counter.files + counter.directories);
       isCopied = true;
 
-      zipIt();
+      zipIt().then(sendZip);
     } else {
       console.log(counter.files + counter.directories);
     }

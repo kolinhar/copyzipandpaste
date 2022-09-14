@@ -9,7 +9,6 @@ const CONFIG_FILE_PATH = path.resolve(
 const DEFAULT_CONFIG = {
   files: [],
   directories: [],
-  workingFolder: '',
   backupFolder: '',
 };
 

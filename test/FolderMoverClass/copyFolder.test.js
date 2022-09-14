@@ -24,14 +24,6 @@ before(() => {
 });
 
 after(() => {
-  // remove folders and contents
-  // fs.rmSync(TEST_FOLDER_PATH_ORIG, { recursive: true }, (err) => {
-  //   if (err) {
-  //     console.log(`error deleting ${TEST_FOLDER_PATH_ORIG}`, err);
-  //   } else {
-  //     console.log(`everything ok`);
-  //   }
-  // });
   fs.rmSync(TEST_FOLDER_PATH_DEST, { recursive: true }, (err) => {
     if (err) {
       console.log(`error deleting ${TEST_FOLDER_PATH_DEST}`, err);
@@ -61,7 +53,7 @@ describe('copyFolder method', () => {
 
 describe('removeFolder method', () => {
   it('remove a folder and its content', (done) => {
-    FolderMover.removeFolder(TEST_FOLDER_PATH_ORIG, () => {
+    FolderMover.removeFolder(TEST_FOLDER_PATH_ORIG).then(() => {
       fs.access(TEST_FOLDER_PATH_ORIG, (err) => {
         if (err) {
           done();
@@ -69,6 +61,10 @@ describe('removeFolder method', () => {
           done('folder not deleted');
         }
       });
-    });
+    }, done);
+  });
+
+  it('should fail with an inexisting path', () => {
+    assert.rejects(FolderMover.removeFolder(`.${path.sep}false`));
   });
 });

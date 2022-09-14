@@ -136,15 +136,18 @@ class FolderMover extends FileMover {
   /**
    * remove a folder and its content
    * @param {string} path
-   * @param {Function} [cb]
+   * @returns {Promise}
    */
-  static removeFolder(path, cb) {
-    fs.rm(path, { recursive: true }, (err) => {
-      if (err) {
-        console.log(`folder ${path} not deleted`);
-      }
-
-      cb && cb();
+  static removeFolder(path) {
+    return new Promise((resolve, reject) => {
+      fs.rm(path, { recursive: true }, (err) => {
+        if (err) {
+          console.log(`folder ${path} not deleted`);
+          reject();
+        } else {
+          resolve();
+        }
+      });
     });
   }
 }

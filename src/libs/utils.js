@@ -84,7 +84,6 @@ function getConfigFromJSON() {
   // @TODO: and why the fuck I had to use it like that to make it fucking works properly ?
   const config = JsonWriter.JsonWriter.getConfig();
   console.table({
-    'Working Folder': config.workingFolder,
     'Backup Folder': config.backupFolder,
   });
   console.log('\nFiles');

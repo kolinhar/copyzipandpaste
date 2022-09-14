@@ -165,30 +165,6 @@ describe('JsonWriter tests', () => {
     });
   });
 
-  describe('working folder', () => {
-    it('add a working folder', () => {
-      JsonWriter.setCopyFolder(configPathFolder);
-      const { workingFolder } = JsonWriter.getConfig();
-
-      assert.strictEqual(workingFolder, configPathFolder);
-    });
-
-    it('update a working folder', () => {
-      JsonWriter.setCopyFolder(configPathFolder);
-      JsonWriter.setCopyFolder(configPathFolder2);
-      const { workingFolder } = JsonWriter.getConfig();
-
-      assert.strictEqual(workingFolder, configPathFolder2);
-    });
-
-    it('add a wrong working folder and log the error', () => {
-      JsonWriter.setCopyFolder('.\\here it is');
-      const { workingFolder } = JsonWriter.getConfig();
-
-      assert.strictEqual(workingFolder, '');
-    });
-  });
-
   describe('backup folder', () => {
     it('add a backup folder', () => {
       JsonWriter.setBackupFolder(configPathFolder);

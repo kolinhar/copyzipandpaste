@@ -93,26 +93,8 @@ class JsonWriter {
   }
 
   /**
-   * add/update the copy/zip folder
-   * @param {string} rawPath
-   */
-  static setCopyFolder(rawPath) {
-    const absolutePath = absolutingPath(rawPath);
-
-    if (checkPathSync(absolutePath)) {
-      const config = this.getConfig();
-      config.workingFolder = absolutePath;
-      fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
-      console.log(`working folder setted to ${absolutePath}`);
-    } else {
-      console.error(`cannot set working folder to ${absolutePath}`);
-    }
-  }
-
-  /**
    * return config file in JSON
    * @returns {{
-   *  workingFolder: string,
    *  backupFolder: string,
    *  files: {
    *    path: string,
@@ -143,15 +125,27 @@ class JsonWriter {
     if (typeof rawPath === 'number') {
       objectType = isFile ? 'files' : 'directories';
 
-      //filter on indix
+      if (!config[objectType][rawPath]) {
+        console.log(`path ${rawPath} doesn't exist`);
+        return;
+      }
+
+      //filter on index
       config[objectType] = config[objectType].filter(
-        (val, ind) => ind !== rawPath
+        (_val, ind) => ind !== rawPath
       );
     } else {
       const absolutePath = absolutingPath(rawPath);
       objectType = fs.lstatSync(absolutePath).isDirectory()
         ? 'directories'
         : 'files';
+
+      if (
+        !config[objectType].find((pathObj) => pathObj.path === absolutePath)
+      ) {
+        console.log(`path ${rawPath} doesn't exist`);
+        return;
+      }
 
       //filter on path
       config[objectType] = config[objectType].filter(
