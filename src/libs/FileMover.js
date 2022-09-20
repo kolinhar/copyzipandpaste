@@ -78,59 +78,62 @@ class FolderMover extends FileMover {
    * move a folder and its content
    * @param {string} folderOrigin
    * @param {string} destination
-   * @param {Function} [cb]
+   * @returns {Promise}
    */
-  static copyFolder(folderOrigin, destination, cb) {
-    //folderOrigin will be moved to destination
-    // create folder in destination
-    fs.mkdir(destination, { recursive: true }, (err) => {
-      if (err) throw err;
+  static copyFolder(folderOrigin, destination) {
+    return new Promise((resolve, reject) => {
+      //folderOrigin will be moved to destination
+      // create folder in destination
+      fs.mkdir(destination, { recursive: true }, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          // read origin folder content
+          fs.readdir(folderOrigin, (err, files) => {
+            if (err) {
+              reject(err);
+            } else {
+              let filesCounter = files.length;
 
-      // read origin folder content
-      fs.readdir(folderOrigin, (err, files) => {
-        if (err) throw err;
-
-        let filesCounter = files.length;
-
-        // if it's an empty folder call the callback
-        if (filesCounter === 0) {
-          cb && cb();
-        }
-
-        files.forEach((file) => {
-          const filePath = `${folderOrigin}${path.sep}${file}`;
-
-          // check if filePath is a directory or file
-          if (fs.lstatSync(filePath).isDirectory() === true) {
-            // moveFolder for each folder
-            this.copyFolder(
-              filePath,
-              `${destination}${path.sep}${file}`,
-              () => {
-                filesCounter--;
-
-                if (filesCounter === 0) {
-                  cb && cb();
-                }
-              }
-            );
-          } else {
-            const fileName = path.basename(filePath);
-            const newDest = `${destination}\\${fileName}`;
-            // move each file in new folder destination
-            this.copyFile(filePath, newDest).then(() => {
-              filesCounter--;
-
+              // if it's an empty folder call the callback
               if (filesCounter === 0) {
-                cb && cb();
+                resolve();
+              } else {
+                files.forEach((file) => {
+                  const filePath = `${folderOrigin}${path.sep}${file}`;
+
+                  // check if filePath is a directory or file
+                  if (fs.lstatSync(filePath).isDirectory() === true) {
+                    // copyFolder for each folder
+                    this.copyFolder(
+                      filePath,
+                      `${destination}${path.sep}${file}`
+                    ).then(() => {
+                      filesCounter--;
+
+                      if (filesCounter === 0) {
+                        resolve();
+                      }
+                    }, reject);
+                  } else {
+                    const fileName = path.basename(filePath);
+                    const newDest = `${destination}\\${fileName}`;
+                    // move each file in new folder destination
+                    this.copyFile(filePath, newDest).then(() => {
+                      filesCounter--;
+
+                      if (filesCounter === 0) {
+                        resolve();
+                      }
+                    }, reject);
+                  }
+                });
               }
-            });
-          }
-        });
+            }
+          });
+        }
       });
     });
-
-    fs.rename(folderOrigin, destination, cb);
   }
 
   /**
