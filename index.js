@@ -10,8 +10,10 @@ const { getCurrentFolderName, checkPathSync } = require('./src/libs/utils');
 
 // console.log('it works');
 
+let renamedZip = '';
+
 /**
- *
+ * do the job
  * @param {boolean} dryRun
  */
 async function cpzs(dryRun) {
@@ -28,7 +30,7 @@ async function cpzs(dryRun) {
     )
   );
 
-  const renamedZip = tempDestination.replace(/-\w*$/g, '');
+  renamedZip = tempDestination.replace(/-\w*$/g, '');
 
   const finalDestination = config.backupFolder;
 
@@ -125,80 +127,85 @@ async function cpzs(dryRun) {
         }
       }),
   ]);
+}
 
-  /**
-   * zip temp folder
-   * @returns {Promise}
-   */
-  async function zipIt() {
-    console.log(
-      `Zipping folder '${getCurrentFolderName(
-        tempDestination
-      )}' into archive '${getCurrentFolderName(renamedZip)}.zip'`
-    );
+/**
+ * zip temporary folder
+ * @returns {Promise}
+ */
+async function zipIt() {
+  console.log(
+    `Zipping folder '${getCurrentFolderName(
+      tempDestination
+    )}' into archive '${getCurrentFolderName(renamedZip)}.zip'`
+  );
 
-    return zip.ZipAFolder.zip(tempDestination, `${renamedZip}.zip`).then(
-      () => {
-        console.log(`Archive done`);
-      },
-      (reason) => {
-        console.log(`not zipped`, reason);
-      }
-    );
-  }
-
-  /**
-   * copy zipped folder to its final emplacement and remove it from temp folder
-   */
-  async function sendZip() {
-    console.log(`copying archive`);
-
-    const dest = `${finalDestination}${path.sep}${getCurrentFolderName(
-      renamedZip
-    )}.zip`;
-    console.log('sending archive to', dest);
-
-    return FileMover.copyFile(`${renamedZip}.zip`, dest).then(
-      async () => {
-        console.log('zip file sended');
-      },
-      (reason) => {
-        console.error(`cannot copy archive`, reason);
-      }
-    );
-  }
-
-  async function removeTemp() {
-    if (!dryRun) {
-      return await FileMover.removeFile(`${renamedZip}.zip`).then(
-        async () => {
-          console.log('archive file removed from temp folder');
-
-          return await FolderMover.removeFolder(tempDestination).then(
-            () => {
-              console.log('temp folder removed');
-            },
-            (reason) => {
-              console.error(`cannot remove temp folder`, reason);
-            }
-          );
-        },
-        (reason) => {
-          console.error(`cannot remove archive file`, reason);
-        }
-      );
-    } else {
-      return Promise.resolve();
+  return zip.ZipAFolder.zip(tempDestination, `${renamedZip}.zip`).then(
+    () => {
+      console.log(`Archive done`);
+    },
+    (reason) => {
+      console.log(`not zipped`, reason);
     }
-  }
+  );
+}
 
-  /**
-   * log status
-   * @param {string} fileFolderPath
-   */
-  function copyLogger(fileFolderPath) {
-    console.log(`'${fileFolderPath}' copied`);
+/**
+ * copy zipped folder to its final emplacement and remove it from temp folder
+ * @returns {Promise}
+ */
+async function sendZip() {
+  console.log(`copying archive`);
+
+  const dest = `${finalDestination}${path.sep}${getCurrentFolderName(
+    renamedZip
+  )}.zip`;
+  console.log('sending archive to', dest);
+
+  return FileMover.copyFile(`${renamedZip}.zip`, dest).then(
+    async () => {
+      console.log('zip file sended');
+    },
+    (reason) => {
+      console.error(`cannot copy archive`, reason);
+    }
+  );
+}
+
+/**
+ * delete temporaries files and folders
+ * @returns {Promise}
+ */
+async function removeTemp() {
+  if (!dryRun) {
+    return await FileMover.removeFile(`${renamedZip}.zip`).then(
+      async () => {
+        console.log('archive file removed from temp folder');
+
+        return await FolderMover.removeFolder(tempDestination).then(
+          () => {
+            console.log('temp folder removed');
+          },
+          (reason) => {
+            console.error(`cannot remove temp folder`, reason);
+          }
+        );
+      },
+      (reason) => {
+        console.error(`cannot remove archive file`, reason);
+      }
+    );
+  } else {
+    return Promise.resolve();
   }
+}
+
+/**
+ * log status
+ * @param {string} fileFolderPath
+ */
+function copyLogger(fileFolderPath) {
+  console.log(`'${fileFolderPath}' copied`);
 }
 
 exports.cpzs = cpzs;
