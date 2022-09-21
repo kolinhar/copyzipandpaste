@@ -145,8 +145,7 @@ class FolderMover extends FileMover {
     return new Promise((resolve, reject) => {
       fs.rm(path, { recursive: true }, (err) => {
         if (err) {
-          console.log(`folder ${path} not deleted`);
-          reject();
+          reject(err);
         } else {
           resolve();
         }
