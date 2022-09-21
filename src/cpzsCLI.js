@@ -56,7 +56,7 @@ program
   });
 
 program
-  .command('getConfig')
+  .command('config')
   .description('get the all the config')
   .action(getConfigFromJSON);
 
@@ -69,7 +69,7 @@ program
   )
   .description('do the job')
   .action((options) => {
-    console.log("Let's the hack begin");
+    console.log("Let's the hack begin !");
     cpzs(options.dryRun);
   });
 

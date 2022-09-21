@@ -14,7 +14,7 @@ const { getCurrentFolderName, checkPathSync } = require('./src/libs/utils');
  *
  * @param {boolean} dryRun
  */
-function cpzs(dryRun) {
+async function cpzs(dryRun) {
   const maDate = new Date();
   const config = JsonWriter.getConfig();
   // console.log(`config`, config);
@@ -27,130 +27,119 @@ function cpzs(dryRun) {
       }-${maDate.getDate()}_${maDate.getHours()}-${maDate.getMinutes()}-${maDate.getSeconds()}-${maDate.getMilliseconds()}`
     )
   );
+
   const renamedZip = tempDestination.replace(/-\w*$/g, '');
 
   const finalDestination = config.backupFolder;
-
-  let isCopied = false;
-
-  const counter = {
-    files: config.files.length,
-    directories: config.directories.length,
-  };
 
   if (!checkPathSync(finalDestination)) {
     fs.mkdirSync(finalDestination);
   }
 
-  config.files.forEach((file) => {
-    const fileName = path.basename(file.path);
-    const newDest = `${tempDestination}${path.sep}${fileName}`;
+  // copy
+  await Promise.allSettled([
+    ...config.files
+      .filter((f) => f.save)
+      .map((file) => {
+        const fileName = path.basename(file.path);
+        const newDest = `${tempDestination}${path.sep}${fileName}`;
 
-    if (file.save === true) {
-      //move file
-      FileMover.copyFile(file.path, newDest).then(
-        () => {
-          if (file.delete === true && dryRun === false) {
-            //delete file
-            FileMover.removeFile(file.path, () => {
-              counter.files--;
-              countDown(counter, file.path);
-            });
-          } else {
-            counter.files--;
-            countDown(counter, file.path);
-          }
-        },
-        (reason) => {
-          console.error(`file not copied`, reason);
-        }
-      );
-    } else {
-      if (file.delete === true && dryRun === false) {
-        //delete file
-        FileMover.removeFile(file.path).then(
+        return FileMover.copyFile(file.path, newDest).then(
           () => {
-            counter.files--;
-            countDown(counter, file.path);
+            copyLogger(file.path);
           },
           (reason) => {
-            console.error(`file not removed`, reason);
+            console.error(`file '${file.path}' not copied`, reason);
           }
         );
-      } else {
-        counter.files--;
-        countDown(counter, file.path);
-      }
-    }
-  });
+      }),
+    ...config.directories
+      .filter((d) => d.save)
+      .map((directory) => {
+        const folderName = getCurrentFolderName(directory.path);
+        const newDest = `${tempDestination}${path.sep}${folderName}`;
 
-  config.directories.forEach((directory, ind, arr) => {
-    console.log(`${ind} current:`, arr[ind]);
-
-    const folderName = getCurrentFolderName(directory.path);
-    const newDest = `${tempDestination}${path.sep}${folderName}`;
-
-    if (directory.save === true) {
-      console.log(`try to copy ${directory.path}`);
-
-      //move it
-      FolderMover.copyFolder(directory.path, newDest).then(
-        () => {
-          console.log(`${folderName} and its content has been copied`);
-          //then
-          if (directory.delete === true && dryRun === false) {
-            //delete it
-            FolderMover.removeFolder(directory.path).then(
-              () => {
-                counter.directories--;
-                countDown(counter, directory.path);
-              },
-              (reason) => {
-                console.error(`cannot remove folder ${reason}`);
-              }
-            );
-          } else {
-            console.log(`${directory.path} preserved`);
-
-            counter.directories--;
-            countDown(counter, directory.path);
-          }
-        },
-        (reason) => {
-          console.error(`folder not copied`, reason);
-        }
-      );
-    } else {
-      if (directory.delete === true && dryRun === false) {
-        //only delete it
-        FolderMover.removeFolder(directory.path).then(
+        //move it
+        return FolderMover.copyFolder(directory.path, newDest).then(
           () => {
-            counter.directories--;
-            countDown(counter, directory.path);
+            copyLogger(directory.path);
           },
           (reason) => {
-            console.error(`cannot remove folder ${reason}`);
+            console.error(`folder '${directory.path}' not copied`, reason);
           }
         );
-      } else {
-        console.log(
-          `${directory.path} won't be moved or deleted... So why did you add it?`
-        );
-        counter.directories--;
-        countDown(counter, directory.path);
-      }
-    }
+      }),
+  ]).then(null, (reason) => {
+    console.log(`error during copy:`, reason);
   });
+
+  // zip temp folder
+  await zipIt();
+
+  // send zip archive to its destination
+  await sendZip();
+
+  // delete temp folder and its archive
+  await removeTemp();
+
+  // deletion all files and folders needed
+  await Promise.allSettled([
+    ...config.files
+      .filter((f) => f.delete)
+      .map((file) => {
+        if (dryRun === false) {
+          //delete file
+          return FileMover.removeFile(file.path).then(
+            () => {
+              console.log(`file '${file.path}' deleted`);
+            },
+            (reason) => {
+              // maybe deletion could not be permitted for some kind of file (check permissions)
+              console.error(`cannot remove file '${file.path}'`, reason);
+            }
+          );
+        } else {
+          copyLogger(file.path);
+          return Promise.resolve();
+        }
+      }),
+    ...config.directories
+      .filter((d) => d.delete)
+      .map((directory) => {
+        if (dryRun === false) {
+          console.log(`try to delete ${directory.path}`);
+
+          //delete it
+          return FolderMover.removeFolder(directory.path).then(
+            () => {
+              console.log(`folder '${directory.path}' deleted`);
+            },
+            (reason) => {
+              // maybe deletion could not be permitted for some kind of folder (check permissions)
+              console.error(`cannot remove folder '${directory.path}'`, reason);
+            }
+          );
+        } else {
+          copyLogger(directory.path);
+          return Promise.resolve();
+        }
+      }),
+  ]);
 
   /**
    * zip temp folder
    * @returns {Promise}
    */
-  function zipIt() {
-    console.log(`Zipping ${tempDestination} to ${renamedZip}.zip`);
+  async function zipIt() {
+    console.log(
+      `Zipping folder '${getCurrentFolderName(
+        tempDestination
+      )}' into archive '${getCurrentFolderName(renamedZip)}.zip'`
+    );
+
     return zip.ZipAFolder.zip(tempDestination, `${renamedZip}.zip`).then(
       () => {
-        console.log(`zipped`);
+        console.log(`Archive done`);
       },
       (reason) => {
         console.log(`not zipped`, reason);
@@ -161,7 +150,7 @@ function cpzs(dryRun) {
   /**
    * copy zipped folder to its final emplacement and remove it from temp folder
    */
-  function sendZip() {
+  async function sendZip() {
     console.log(`copying archive`);
 
     const dest = `${finalDestination}${path.sep}${getCurrentFolderName(
@@ -169,52 +158,46 @@ function cpzs(dryRun) {
     )}.zip`;
     console.log('sending archive to', dest);
 
-    !dryRun &&
-      FolderMover.removeFolder(tempDestination).then(
-        () => {
-          console.log('temp folder removed');
-        },
-        (reason) => {
-          console.error(`cannot remove temp folder ${reason}`);
-        }
-      );
-
-    FileMover.copyFile(`${renamedZip}.zip`, dest).then(
-      () => {
+    return FileMover.copyFile(`${renamedZip}.zip`, dest).then(
+      async () => {
         console.log('zip file sended');
-
-        !dryRun &&
-          FileMover.removeFile(`${renamedZip}.zip`).then(
-            () => {
-              console.log('zip file removed from temp folder');
-            },
-            (reason) => {
-              console.error(`cannot remove temp folder ${reason}`);
-            }
-          );
       },
       (reason) => {
-        console.error(`cannot copy archive ${reason}`);
+        console.error(`cannot copy archive`, reason);
       }
     );
   }
 
+  async function removeTemp() {
+    if (!dryRun) {
+      return await FileMover.removeFile(`${renamedZip}.zip`).then(
+        async () => {
+          console.log('archive file removed from temp folder');
+
+          return await FolderMover.removeFolder(tempDestination).then(
+            () => {
+              console.log('temp folder removed');
+            },
+            (reason) => {
+              console.error(`cannot remove temp folder`, reason);
+            }
+          );
+        },
+        (reason) => {
+          console.error(`cannot remove archive file`, reason);
+        }
+      );
+    } else {
+      return Promise.resolve();
+    }
+  }
+
   /**
    * log status
-   * @param {{files: number, directories: number}} counter
+   * @param {string} fileFolderPath
    */
-  function countDown(counter, fileFolderPath) {
-    if (isCopied === true) return;
-
-    if (counter.files === 0 && counter.directories === 0) {
-      isCopied = true;
-
-      zipIt().then(sendZip, (reason) => {
-        console.error(`not zipped:`, reason);
-      });
-    } else {
-      console.log(`${fileFolderPath} ok\n`);
-    }
+  function copyLogger(fileFolderPath) {
+    console.log(`'${fileFolderPath}' copied`);
   }
 }
 
