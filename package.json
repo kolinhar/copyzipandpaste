@@ -3,7 +3,9 @@
   "version": "1.2.8",
   "description": "copy, zip, delete and send it to a folder",
   "scripts": {
-    "test": "cls && mocha"
+    "test": "cls && mocha",
+    "preinstall": "./preinstall",
+    "postinstall": "./postinstall"
   },
   "bin": {
     "cpzs": "./src/cpzsCLI.js"
