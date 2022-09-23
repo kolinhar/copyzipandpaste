@@ -1,6 +1,6 @@
 const path = require('path');
 
-const configFileName = `files.json`;
+const configFileName = `config.json`;
 
 const CONFIG_FILE_PATH = path.resolve(
   `${__dirname}${path.sep}..${path.sep}config${path.sep}${configFileName}`
