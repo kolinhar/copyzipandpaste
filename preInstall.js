@@ -2,39 +2,36 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const child_process = require('child_process');
-const { JsonWriter } = require('./libs/JsonWriter');
-const { absolutingPath } = require('./libs/utils');
-const { configFilePath } = require('./config/constants');
+const { CONFIG_FILE_PATH } = require('./src/config/constants');
 
-const CONFIG_FILE_PATH = absolutingPath(`${__dirname}${configFilePath}`);
+console.log(`config file to find: ${CONFIG_FILE_PATH}`);
+
 const isConfigFileExists = fs.existsSync(CONFIG_FILE_PATH);
-
-console.log(
-  `${CONFIG_FILE_PATH}`,
-  isConfigFileExists === true ? 'exists' : "doesn't exist"
-);
 
 if (isConfigFileExists === true) {
   console.log('saving config file');
   //save the config file
-  const config = JsonWriter.getConfig();
-  // console.log(config);
-  fs.mkdtemp(path.join(os.tmpdir(), 'config-'), (err, directory) => {
+  fs.mkdtemp(path.join(os.tmpdir(), 'cpzs-config-'), (err, directory) => {
     if (err) throw err;
 
-    // save path name somewhere
+    const configFilePathTemp = path.join(directory, 'files.json');
+
+    // save path name in npm config
     child_process.exec(
-      `npm config set cpzsBackupFolder ${path.join(directory, 'files.json')}`,
+      `npm config set cpzsInstallFolder ${configFilePathTemp}`,
       null,
-      (error) => {
-        if (error) throw error;
+      (error, _stdout, stderr) => {
+        if (error) throw stderr;
+
+        fs.copyFile(CONFIG_FILE_PATH, configFilePathTemp, (err) => {
+          if (err) throw err;
+
+          console.log('directory', path.dirname(configFilePathTemp));
+        });
       }
     );
-    fs.createReadStream(CONFIG_FILE_PATH).pipe(
-      fs.createWriteStream(path.join(directory, 'files.json'))
-    );
-    console.log('directory', path.dirname(path.join(directory, 'files.json')));
   });
 } else {
-  //#BALEK
+  // normal install
+  console.log('no config file found, normal install');
 }
