@@ -3,6 +3,8 @@ const path = require('path');
 const child_process = require('child_process');
 const { CONFIG_FILE_PATH } = require('./src/config/constants');
 
+console.log(`post install script`);
+
 child_process.exec(
   'npm config get cpzsInstallFolder',
   null,

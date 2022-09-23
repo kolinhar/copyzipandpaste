@@ -4,8 +4,8 @@
   "description": "copy, zip, delete and send it to a folder",
   "scripts": {
     "test": "cls && mocha",
-    "preinstall": "./preinstall",
-    "postinstall": "./postinstall"
+    "preinstall": "node ./preinstall.js",
+    "postinstall": "node ./postinstall.js"
   },
   "bin": {
     "cpzs": "./src/cpzsCLI.js"

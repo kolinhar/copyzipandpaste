@@ -4,6 +4,8 @@ const os = require('os');
 const child_process = require('child_process');
 const { CONFIG_FILE_PATH } = require('./src/config/constants');
 
+console.log(`pre install script`);
+
 console.log(`config file to find: ${CONFIG_FILE_PATH}`);
 
 const isConfigFileExists = fs.existsSync(CONFIG_FILE_PATH);
