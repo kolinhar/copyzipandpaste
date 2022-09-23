@@ -1,0 +1,43 @@
+{
+  "files": [
+    {
+      "path": "C:\\Users\\rjuanes\\Downloads\\MicrosoftTeams-image (5).png",
+      "save": true,
+      "delete": false
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Downloads\\vol2.chronique d’utopia ch32.pdf",
+      "save": true,
+      "delete": false
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Downloads\\IMG_3235.MOV",
+      "save": true,
+      "delete": false
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Downloads\\Carte Tiers Payant-0100371455.pdf",
+      "save": true,
+      "delete": false
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Downloads\\vidéo -20220920-215413-a61950d0.mov",
+      "save": true,
+      "delete": false
+    }
+  ],
+  "directories": [
+    { "path": "C:\\Users\\rjuanes\\Pictures", "save": true, "delete": false },
+    {
+      "path": "C:\\Users\\rjuanes\\Downloads\\drive-download-20220823T101641Z-001",
+      "save": true,
+      "delete": false
+    },
+    {
+      "path": "C:\\Users\\rjuanes\\Documents\\Dev\\test-table\\",
+      "save": true,
+      "delete": true
+    }
+  ],
+  "backupFolder": "C:\\Users\\rjuanes\\Documents\\code"
+}

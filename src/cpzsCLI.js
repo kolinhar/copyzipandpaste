@@ -9,7 +9,7 @@ const { JsonWriter } = require('./libs/JsonWriter');
 const { getConfigFromJSON } = require('./libs/utils');
 
 const myNumberReg = /^\d{1,4}$/;
-program.version('1.1.6');
+program.version('1.2.6');
 
 program
   .command('add <filePath>')

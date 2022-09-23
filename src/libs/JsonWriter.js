@@ -1,14 +1,6 @@
 'use strict';
 const fs = require('fs');
 const { absolutingPath, checkPathSync } = require('./utils');
-
-// @TODO: put in a configuration file in ./config in order to get the CONFIG_FILE_PATH
-/*
-  do something like this:
-  create a js file and just write in it 'exports.CONFIG_FILE_PATH = [insert the right path here]'
-  then import it to avoid fs.readFileSync() each time
-  or find something better
-*/
 const { CONFIG_FILE_PATH } = require('../config/constants');
 
 class JsonWriter {
