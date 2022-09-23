@@ -13,7 +13,7 @@ program.version('1.2.7');
 
 program
   .command('add <filePath>')
-  .option('-s, --save', 'save target', true)
+  .option('-s, --save', 'save target', false)
   .option('-d, --deletion', 'delete target', false)
   .description('add a file or folder to the config file')
   .action((filePath, options) => {
