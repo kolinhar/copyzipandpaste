@@ -3,13 +3,47 @@
 
 // don't forget npm i and npm link before dev ;-)
 
+const child_process = require('child_process');
 const { program } = require('commander');
 const { cpzs } = require('../index');
 const { JsonWriter } = require('./libs/JsonWriter');
-const { getConfigFromJSON } = require('./libs/utils');
+const {
+  getConfigFromJSON,
+  formatStdout,
+  formatStdoutFromJSONNmprc,
+  formatJSONToNpmrc,
+} = require('./libs/utils');
 
 const myNumberReg = /^\d{1,4}$/;
-program.version('1.2.10');
+program.version('1.2.11');
+
+program.command('test').action(() => {
+  child_process.exec(
+    `npm config set cpzs:config ${formatJSONToNpmrc(JsonWriter.getConfig())}`,
+    null,
+    (error, _stdout, stderr) => {
+      if (error) throw stderr;
+
+      child_process.exec(
+        'npm config get cpzs:config',
+        (error, stdout, stderr) => {
+          if (error) throw stderr;
+
+          stdout = formatStdout(stdout);
+
+          if (stdout === 'undefined') {
+            console.log(`no configuration found`);
+          } else {
+            console.log(`stdout:\n ${stdout}`);
+            console.log(`try to parse in JSON:`);
+            console.log(stdout);
+            console.log(formatStdoutFromJSONNmprc(stdout));
+          }
+        }
+      );
+    }
+  );
+});
 
 program
   .command('add <filePath>')

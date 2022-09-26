@@ -100,9 +100,36 @@ function getConfigFromJSON() {
   }
 }
 
+/**
+ * format stdout output because it always return a breaking line from command line
+ * @param {string} stdout
+ * @returns {string}
+ */
+const formatStdout = (stdout) => stdout.slice(0, -1);
+
+/**
+ * format stdout from a JSON variable stored in npmrc
+ * @param {string} stdout
+ * @returns {Object}
+ */
+const formatStdoutFromJSONNmprc = (stdout) =>
+  JSON.parse(stdout.slice(0, -1).slice(1));
+
+/**
+ * format JSON to string storable in npmrc file
+ * @param {Object} Json
+ * @returns {string}
+ */
+const formatJSONToNpmrc = (Json) => {
+  return '"' + `"${JSON.stringify(Json)}"`.replaceAll('"', `\\"`) + '"';
+};
+
 exports.getCurrentFolderName = getCurrentFolderName;
 exports.absolutingPath = absolutingPath;
 exports.checkPath = checkPath;
 exports.checkPathSync = checkPathSync;
 exports.getCurrentPathFromFilePath = getCurrentPathFromFilePath;
 exports.getConfigFromJSON = getConfigFromJSON;
+exports.formatStdout = formatStdout;
+exports.formatStdoutFromJSONNmprc = formatStdoutFromJSONNmprc;
+exports.formatJSONToNpmrc = formatJSONToNpmrc;

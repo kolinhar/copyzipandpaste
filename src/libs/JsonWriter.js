@@ -13,20 +13,6 @@ class JsonWriter {
   static CONFIG_FILE_PATH_INTERNAL = CONFIG_FILE_PATH;
 
   /**
-   * set the configuration path file
-   * @param {string} filePath
-   */
-  static setConfigFilePath(filePath) {
-    const absolutedPath = absolutingPath(filePath);
-    if (checkPathSync(absolutedPath)) {
-      this.CONFIG_FILE_PATH_INTERNAL = filePath;
-      console.log(`config file path updated to ${absolutedPath}`);
-    } else {
-      console.error(`cannot set working folder to ${absolutedPath}`);
-    }
-  }
-
-  /**
    * add/update a path in the config file
    * @param {string} rawPath
    * @param {{save: boolean, deletion: boolean}} options
