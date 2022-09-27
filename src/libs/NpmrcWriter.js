@@ -10,6 +10,20 @@ const {
 } = require('./utils');
 const { DEFAULT_CONFIG } = require('../config/constants');
 
+/**
+ * @typedef {{
+ *    path: string,
+ *    save: boolean,
+ *    delete: boolean
+ *  }} configTuple
+ *
+ * @typedef {{
+ *  backupFolder: string,
+ *  files: configTuple[],
+ *  directories: configTuple[]
+ * }} configObj
+ */
+
 class NpmrcWriter {
   constructor() {
     if (new.target === NpmrcWriter) {
@@ -79,18 +93,7 @@ class NpmrcWriter {
 
   /**
    * return config in JSON
-   * @returns {{
-   *  backupFolder: string,
-   *  files: {
-   *    path: string,
-   *    save: boolean,
-   *    delete: boolean
-   *  }[],
-   *  directories: {
-   *    path: string,
-   *    save: boolean,
-   *    delete: boolean
-   *  }[]}}
+   * @returns {configObj}
    * @param {boolean} [test]
    */
   static getConfig(test = false) {
@@ -102,29 +105,15 @@ class NpmrcWriter {
     const stdoutFormatted = formatStdout(stdout);
 
     if (stdoutFormatted === 'undefined') {
-      // console.log(`no configuration found`);
       return DEFAULT_CONFIG;
     } else {
-      // console.log(`config file found:`, stdoutFormatted);
-
       return formatStdoutFromJSONNmprc(stdoutFormatted);
     }
   }
 
   /**
    * set config from JSON
-   * @param {{
-   *  backupFolder: string,
-   *  files: {
-   *    path: string,
-   *    save: boolean,
-   *    delete: boolean
-   *  }[],
-   *  directories: {
-   *    path: string,
-   *    save: boolean,
-   *    delete: boolean
-   *  }[]}} json
+   * @param {configObj} json
    * @param {boolean} [test] testing mode
    */
   static _setConfig(json, test = false) {

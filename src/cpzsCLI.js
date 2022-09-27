@@ -3,7 +3,6 @@
 
 // don't forget npm i and npm link before dev ;-)
 
-const child_process = require('child_process');
 const { program } = require('commander');
 const { cpzs } = require('../index');
 const { NpmrcWriter } = require('./libs/NpmrcWriter');
