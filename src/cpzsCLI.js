@@ -10,7 +10,7 @@ const { NpmrcWriter } = require('./libs/NpmrcWriter');
 const { getConfigFromJSON } = require('./libs/utils');
 
 const myNumberReg = /^\d{1,4}$/;
-program.version('1.2.11');
+program.version('1.2.10');
 
 program
   .command('add <filePath>')
