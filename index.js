@@ -4,7 +4,7 @@ const os = require('os');
 const fs = require('fs');
 const zip = require('zip-a-folder');
 
-const { NpmrcWriter } = require('./src/libs/npmrcWriter');
+const { NpmrcWriter } = require('./src/libs/NpmrcWriter');
 const { FileMover, FolderMover } = require('./src/libs/FileMover');
 const { getCurrentFolderName, checkPathSync } = require('./src/libs/utils');
 

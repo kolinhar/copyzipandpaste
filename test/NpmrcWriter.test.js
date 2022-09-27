@@ -1,6 +1,6 @@
 const child_process = require('child_process');
 const assert = require('assert');
-const { NpmrcWriter } = require('../src/libs/npmrcWriter');
+const { NpmrcWriter } = require('../src/libs/NpmrcWriter');
 const { DEFAULT_CONFIG } = require('../src/config/constants');
 const { formatJSONToNpmrc } = require('../src/libs/utils');
 
