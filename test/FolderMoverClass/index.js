@@ -1,6 +1,10 @@
 const path = require('path');
 const fs = require('fs');
-const { TEST_FOLDER_PATH_DEST, TEST_FOLDER_PATH_ORIG } = require('./constants');
+const {
+  TEST_FOLDER_PATH_DEST,
+  TEST_FOLDER_PATH_ORIG,
+  NEVER_FOLDER,
+} = require('./constants');
 
 before(() => {
   //create a folder an its content
@@ -26,9 +30,9 @@ after(() => {
     }
   });
 
-  fs.rmSync('./never', { recursive: true }, (err) => {
+  fs.rmSync(NEVER_FOLDER, { recursive: true }, (err) => {
     if (err) {
-      console.error(`error deleting ./never`, err);
+      console.error(`error deleting ${NEVER_FOLDER}`, err);
     }
   });
 });
