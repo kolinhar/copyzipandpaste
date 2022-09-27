@@ -1,8 +1,6 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-// @TODO: why the fuck I need to import like this ?
-const JsonWriter = require('./JsonWriter');
 
 /**
  * get the last directory of a directory path
@@ -67,7 +65,7 @@ function checkPath(absolutePath) {
 }
 
 /**
- *
+ * check if an absolute path exists
  * @param {string} absolutePath
  * @returns {boolean}
  */
@@ -80,9 +78,11 @@ function checkPathSync(absolutePath) {
   }
 }
 
-function getConfigFromJSON() {
-  // @TODO: and why the fuck I had to use it like that to make it fucking works properly ?
-  const config = JsonWriter.JsonWriter.getConfig();
+/**
+ * displays configuration in console
+ * @param {Object} config
+ */
+function getConfigFromJSON(config) {
   console.table({
     'Backup Folder': config.backupFolder,
   });
@@ -100,9 +100,36 @@ function getConfigFromJSON() {
   }
 }
 
+/**
+ * format stdout because it always return a breaking line from command line
+ * @param {string} stdout
+ * @returns {string}
+ */
+const formatStdout = (stdout) => stdout.slice(0, -1);
+
+/**
+ * format stdout from a JSON variable stored in npmrc
+ * @param {string} stdout
+ * @returns {Object}
+ */
+const formatStdoutFromJSONNmprc = (stdout) =>
+  JSON.parse(stdout.slice(0, -1).slice(1));
+
+/**
+ * format JSON to string storable in npmrc file
+ * @param {Object} Json
+ * @returns {string}
+ */
+const formatJSONToNpmrc = (Json) => {
+  return '"' + `"${JSON.stringify(Json)}"`.replaceAll('"', `\\"`) + '"';
+};
+
 exports.getCurrentFolderName = getCurrentFolderName;
 exports.absolutingPath = absolutingPath;
 exports.checkPath = checkPath;
 exports.checkPathSync = checkPathSync;
 exports.getCurrentPathFromFilePath = getCurrentPathFromFilePath;
 exports.getConfigFromJSON = getConfigFromJSON;
+exports.formatStdout = formatStdout;
+exports.formatStdoutFromJSONNmprc = formatStdoutFromJSONNmprc;
+exports.formatJSONToNpmrc = formatJSONToNpmrc;
