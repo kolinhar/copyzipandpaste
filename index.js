@@ -4,7 +4,7 @@ const os = require('os');
 const fs = require('fs');
 const zip = require('zip-a-folder');
 
-const { JsonWriter } = require('./src/libs/JsonWriter');
+const { NpmrcWriter } = require('./src/libs/npmrcWriter');
 const { FileMover, FolderMover } = require('./src/libs/FileMover');
 const { getCurrentFolderName, checkPathSync } = require('./src/libs/utils');
 
@@ -18,7 +18,7 @@ let renamedZip = '';
  */
 async function cpzs(dryRun) {
   const maDate = new Date();
-  const config = JsonWriter.getConfig();
+  const config = NpmrcWriter.getConfig();
   // console.log(`config`, config);
 
   const tempDestination = fs.mkdtempSync(

@@ -1,9 +1,9 @@
 {
   "name": "cpzs",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "description": "copy, zip, delete and send it to a folder",
   "scripts": {
-    "test": "cls && mocha",
+    "test": "cls && mocha './test/test.js'",
     "preinstall": "node ./preinstall.js",
     "postinstall": "node ./postinstall.js"
   },

@@ -1,23 +1,29 @@
 'use strict';
 const fs = require('fs');
-const { absolutingPath, checkPathSync } = require('./utils');
-const { CONFIG_FILE_PATH } = require('../config/constants');
+const child_process = require('child_process');
+const {
+  absolutingPath,
+  checkPathSync,
+  formatJSONToNpmrc,
+  formatStdout,
+  formatStdoutFromJSONNmprc,
+} = require('./utils');
+const { DEFAULT_CONFIG } = require('../config/constants');
 
-class JsonWriter {
+class NpmrcWriter {
   constructor() {
-    if (new.target === JsonWriter) {
-      throw new Error('Cannot instanciate class JsonWriter directly!');
+    if (new.target === NpmrcWriter) {
+      throw new Error('Cannot instanciate class NpmrcWriter directly!');
     }
   }
-
-  static CONFIG_FILE_PATH_INTERNAL = CONFIG_FILE_PATH;
 
   /**
    * add/update a path in the config file
    * @param {string} rawPath
    * @param {{save: boolean, deletion: boolean}} options
+   * @param {boolean} [test]
    */
-  static setNewPath(rawPath, options) {
+  static setNewPath(rawPath, options, test = false) {
     let absolutePath = absolutingPath(rawPath);
 
     if (fs.existsSync(absolutePath)) {
@@ -47,7 +53,7 @@ class JsonWriter {
         console.log(`path ${absolutePath} added to ${objectType}`);
       }
 
-      fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(json));
+      this._setConfig(json, test);
     } else {
       console.log("this path is not valid or doesn't exist");
     }
@@ -56,14 +62,15 @@ class JsonWriter {
   /**
    * add/update the backup folder
    * @param {string} rawPath
+   * @param {boolean} [test]
    */
-  static setBackupFolder(rawPath) {
+  static setBackupFolder(rawPath, test = false) {
     const absolutePath = absolutingPath(rawPath);
 
     if (checkPathSync(absolutePath)) {
       const config = this.getConfig();
       config.backupFolder = absolutePath;
-      fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
+      this._setConfig(config, test);
       console.log(`backup folder setted to ${absolutePath}`);
     } else {
       console.error(`cannot set backup folder to ${absolutePath}`);
@@ -71,7 +78,7 @@ class JsonWriter {
   }
 
   /**
-   * return config file in JSON
+   * return config in JSON
    * @returns {{
    *  backupFolder: string,
    *  files: {
@@ -84,10 +91,48 @@ class JsonWriter {
    *    save: boolean,
    *    delete: boolean
    *  }[]}}
+   * @param {boolean} [test]
    */
-  static getConfig() {
-    return JSON.parse(
-      fs.readFileSync(this.CONFIG_FILE_PATH_INTERNAL).toString()
+  static getConfig(test = false) {
+    const stdout = child_process.execSync(
+      `npm config get cpzs:${test === true ? 'test' : 'config'}`,
+      { encoding: 'utf8' }
+    );
+
+    const stdoutFormatted = formatStdout(stdout);
+
+    if (stdoutFormatted === 'undefined') {
+      // console.log(`no configuration found`);
+      return DEFAULT_CONFIG;
+    } else {
+      // console.log(`config file found:`, stdoutFormatted);
+
+      return formatStdoutFromJSONNmprc(stdoutFormatted);
+    }
+  }
+
+  /**
+   * set config from JSON
+   * @param {{
+   *  backupFolder: string,
+   *  files: {
+   *    path: string,
+   *    save: boolean,
+   *    delete: boolean
+   *  }[],
+   *  directories: {
+   *    path: string,
+   *    save: boolean,
+   *    delete: boolean
+   *  }[]}} json
+   * @param {boolean} [test] testing mode
+   */
+  static _setConfig(json, test = false) {
+    child_process.execSync(
+      `npm config set cpzs:${
+        test === true ? 'test' : 'config'
+      } ${formatJSONToNpmrc(json)}`,
+      { encoding: 'utf8' }
     );
   }
 
@@ -95,8 +140,9 @@ class JsonWriter {
    * delete an existing path from the configuration
    * @param {string|number} rawPath
    * @param {boolean} [isFile]
+   * @param {boolean} [test]
    */
-  static delPath(rawPath, isFile) {
+  static delPath(rawPath, isFile, test = false) {
     const config = this.getConfig();
     let objectType = '';
 
@@ -131,9 +177,9 @@ class JsonWriter {
       );
     }
 
-    fs.writeFileSync(this.CONFIG_FILE_PATH_INTERNAL, JSON.stringify(config));
+    this._setConfig(config, test);
     console.log(`path ${rawPath} removed from ${objectType}`);
   }
 }
 
-exports.JsonWriter = JsonWriter;
+exports.NpmrcWriter = NpmrcWriter;

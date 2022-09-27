@@ -1,8 +1,6 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-// @TODO: why the fuck I need to import like this ?
-const JsonWriter = require('./JsonWriter');
 
 /**
  * get the last directory of a directory path
@@ -80,9 +78,12 @@ function checkPathSync(absolutePath) {
   }
 }
 
-function getConfigFromJSON() {
+/**
+ *
+ * @param {Object} config
+ */
+function getConfigFromJSON(config) {
   // @TODO: and why the fuck I had to use it like that to make it fucking works properly ?
-  const config = JsonWriter.JsonWriter.getConfig();
   console.table({
     'Backup Folder': config.backupFolder,
   });
