@@ -22,9 +22,13 @@ before(() => {
 after(() => {
   fs.rmSync(TEST_FOLDER_PATH_DEST, { recursive: true }, (err) => {
     if (err) {
-      console.log(`error deleting ${TEST_FOLDER_PATH_DEST}`, err);
-    } else {
-      console.log(`everything ok`);
+      console.error(`error deleting ${TEST_FOLDER_PATH_DEST}`, err);
+    }
+  });
+
+  fs.rmSync('./never', { recursive: true }, (err) => {
+    if (err) {
+      console.error(`error deleting ./never`, err);
     }
   });
 });

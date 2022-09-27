@@ -1,16 +1,18 @@
 const child_process = require('child_process');
+const fs = require('fs');
 const assert = require('assert');
 const { NpmrcWriter } = require('../src/libs/NpmrcWriter');
 const { DEFAULT_CONFIG } = require('../src/config/constants');
-const { formatJSONToNpmrc } = require('../src/libs/utils');
+const { formatJSONToNpmrc, absolutingPath } = require('../src/libs/utils');
+const path = require('path');
 
-const configPathFile =
-  'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\src\\config\\dev\\files_sav.json';
-const configPathFolder =
-  'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\src\\config\\dev';
+const configPathFile = absolutingPath(`.${path.sep}test${path.sep}files.json`);
+const configPathFolder = absolutingPath(`.${path.sep}test`);
 const configPathFolder2 = 'C:\\Users\\rjuanes\\Documents\\Dev';
 
 before(() => {
+  fs.writeFileSync(configPathFile, '{"nothing": "special"}');
+
   child_process.execSync(
     `npm config set cpzs:test ${formatJSONToNpmrc(DEFAULT_CONFIG)}`,
     { encoding: 'utf8' }
@@ -18,7 +20,10 @@ before(() => {
 });
 
 after(() => {
-  child_process.execSync(`npm config delete cpzs:test`, { encoding: 'utf8' });
+  // child_process.execSync(`npm config delete cpzs:test`, { encoding: 'utf8' });
+  fs.rmSync(configPathFile, { recursive: true }, (err) => {
+    err && console.error(err);
+  });
 });
 
 describe('NpmrcWriter tests (slow tests)', function () {
