@@ -65,7 +65,7 @@ function checkPath(absolutePath) {
 }
 
 /**
- *
+ * check if an absolute path exists
  * @param {string} absolutePath
  * @returns {boolean}
  */
@@ -79,11 +79,10 @@ function checkPathSync(absolutePath) {
 }
 
 /**
- *
+ * displays configuration in console
  * @param {Object} config
  */
 function getConfigFromJSON(config) {
-  // @TODO: and why the fuck I had to use it like that to make it fucking works properly ?
   console.table({
     'Backup Folder': config.backupFolder,
   });
@@ -102,7 +101,7 @@ function getConfigFromJSON(config) {
 }
 
 /**
- * format stdout output because it always return a breaking line from command line
+ * format stdout because it always return a breaking line from command line
  * @param {string} stdout
  * @returns {string}
  */
