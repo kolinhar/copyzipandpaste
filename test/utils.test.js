@@ -4,6 +4,7 @@ const {
   getCurrentPathFromFilePath,
   checkPath,
   absolutingPath,
+  m10,
 } = require('../src/libs/utils');
 
 describe('getCurrentFolderName', () => {
@@ -138,5 +139,26 @@ describe('absolutingPath', () => {
       absolutingPath('.\\FileMoverClass'),
       'C:\\Users\\rjuanes\\Documents\\Dev\\copyzipandpaste\\FileMoverClass'
     );
+  });
+
+  describe('m10', () => {
+    it('shoud return "00"', () => {
+      assert.deepStrictEqual(m10(0), '00');
+    });
+    it('shoud return "01"', () => {
+      assert.deepStrictEqual(m10(1), '01');
+    });
+    it('shoud return "03"', () => {
+      assert.deepStrictEqual(m10(3), '03');
+    });
+    it('shoud return "09"', () => {
+      assert.deepStrictEqual(m10(9), '09');
+    });
+    it('shoud return "10"', () => {
+      assert.deepStrictEqual(m10(10), '10');
+    });
+    it('shoud return "100"', () => {
+      assert.deepStrictEqual(m10(100), '100');
+    });
   });
 });

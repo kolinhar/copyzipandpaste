@@ -6,7 +6,11 @@ const zip = require('zip-a-folder');
 
 const { NpmrcWriter } = require('./src/libs/NpmrcWriter');
 const { FileMover, FolderMover } = require('./src/libs/FileMover');
-const { getCurrentFolderName, checkPathSync } = require('./src/libs/utils');
+const {
+  getCurrentFolderName,
+  checkPathSync,
+  m10,
+} = require('./src/libs/utils');
 
 // console.log('it works');
 
@@ -24,9 +28,11 @@ async function cpzs(dryRun) {
   const tempDestination = fs.mkdtempSync(
     path.join(
       os.tmpdir(),
-      `cpzs-archive-${maDate.getFullYear()}-${
-        maDate.getMonth() + 1
-      }-${maDate.getDate()}_${maDate.getHours()}-${maDate.getMinutes()}-${maDate.getSeconds()}-${maDate.getMilliseconds()}`
+      `cpzs-archive-${maDate.getFullYear()}-${m10(maDate.getMonth() + 1)}-${m10(
+        maDate.getDate()
+      )}_${m10(maDate.getHours())}-${m10(maDate.getMinutes())}-${m10(
+        maDate.getSeconds()
+      )}-${m10(maDate.getMilliseconds())}`
     )
   );
 
