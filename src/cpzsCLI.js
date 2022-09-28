@@ -5,11 +5,11 @@
 
 const { program } = require('commander');
 const { cpzs } = require('../index');
-const { JsonWriter } = require('./libs/JsonWriter');
+const { NpmrcWriter } = require('./libs/NpmrcWriter');
 const { getConfigFromJSON } = require('./libs/utils');
 
 const myNumberReg = /^\d{1,4}$/;
-program.version('1.2.7');
+program.version('1.2.11');
 
 program
   .command('add <filePath>')
@@ -18,7 +18,7 @@ program
   .description('add a file or folder to the config file')
   .action((filePath, options) => {
     const { save, deletion } = options;
-    JsonWriter.setNewPath(filePath, { save, deletion });
+    NpmrcWriter.setNewPath(filePath, { save, deletion });
   });
 
 program
@@ -27,7 +27,7 @@ program
     'add or update the backup folder where zipped files and directories will be sent'
   )
   .action((filePath) => {
-    JsonWriter.setBackupFolder(filePath);
+    NpmrcWriter.setBackupFolder(filePath);
   });
 
 program
@@ -42,7 +42,7 @@ program
      */
     // console.log("remove param filePath:", filePath);
     if (filePath !== undefined) {
-      JsonWriter.delPath(filePath);
+      NpmrcWriter.delPath(filePath);
     } else {
       const { i, f } = options;
 
@@ -51,14 +51,16 @@ program
         return;
       }
 
-      JsonWriter.delPath(parseInt(i, 10), f);
+      NpmrcWriter.delPath(parseInt(i, 10), f);
     }
   });
 
 program
   .command('config')
   .description('get the all the config')
-  .action(getConfigFromJSON);
+  .action(() => {
+    getConfigFromJSON(NpmrcWriter.getConfig());
+  });
 
 program
   .command('go')

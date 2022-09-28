@@ -1,7 +1,13 @@
+const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const { FolderMover } = require('../../src/libs/FileMover');
-const { TEST_FOLDER_PATH_DEST, TEST_FOLDER_PATH_ORIG } = require('./constants');
+const {
+  TEST_FOLDER_PATH_DEST,
+  TEST_FOLDER_PATH_ORIG,
+  HERE_FOLDER,
+  NEVER_FOLDER,
+} = require('./constants');
 
 describe('copyFolder method', () => {
   it('should copy the folder and its files', (done) => {
@@ -21,5 +27,9 @@ describe('copyFolder method', () => {
       },
       done
     );
+  });
+
+  it('should fail', () => {
+    assert.rejects(FolderMover.copyFolder(HERE_FOLDER, NEVER_FOLDER));
   });
 });

@@ -5,16 +5,8 @@ const { FolderMover } = require('../../src/libs/FileMover');
 const { TEST_FOLDER_PATH_ORIG } = require('./constants');
 
 describe('removeFolder method', () => {
-  it('remove a folder and its content', (done) => {
-    FolderMover.removeFolder(TEST_FOLDER_PATH_ORIG).then(() => {
-      fs.access(TEST_FOLDER_PATH_ORIG, (err) => {
-        if (err) {
-          done();
-        } else {
-          done('folder not deleted');
-        }
-      });
-    }, done);
+  it('remove a folder and its content', () => {
+    assert.doesNotReject(FolderMover.removeFolder(TEST_FOLDER_PATH_ORIG));
   });
 
   it('should fail with an inexisting path', () => {
