@@ -41,6 +41,10 @@ function getCurrentPathFromFilePath(filePath) {
  * @returns {string}
  */
 function absolutingPath(rawPath) {
+  if (rawPath.charAt(rawPath.length - 1) === path.sep) {
+    rawPath = rawPath.slice(0, -1);
+  }
+
   if (path.isAbsolute(rawPath) === false) {
     return path.join(process.cwd(), path.normalize(rawPath));
   }

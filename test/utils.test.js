@@ -1,4 +1,5 @@
 const assert = require('assert');
+const path = require('path');
 const {
   getCurrentFolderName,
   getCurrentPathFromFilePath,
@@ -111,6 +112,13 @@ describe('checkAbsolutePath', () => {
 });
 
 describe('absolutingPath', () => {
+  it('should remove last separator', () => {
+    assert.strictEqual(
+      absolutingPath(path.join('.', `test${path.sep}`)),
+      __dirname
+    );
+  });
+
   it('should works', () => {
     assert.strictEqual(absolutingPath(__filename), __filename);
   });

@@ -57,7 +57,7 @@ program
 
 program
   .command('config')
-  .description('get the all the config')
+  .description('get all the config')
   .action(() => {
     getConfigFromJSON(NpmrcWriter.getConfig());
   });
