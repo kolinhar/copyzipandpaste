@@ -128,6 +128,15 @@ const formatJSONToNpmrc = (Json) => {
   return '"' + `"${JSON.stringify(Json)}"`.replaceAll('"', `\\"`) + '"';
 };
 
+/**
+ * add a '0' if num is lower than 10
+ * @param {number} num
+ * @returns
+ */
+const m10 = (num) => {
+  return num > 9 ? '' + num : `0${num}`;
+};
+
 exports.getCurrentFolderName = getCurrentFolderName;
 exports.absolutingPath = absolutingPath;
 exports.checkPath = checkPath;
@@ -137,3 +146,4 @@ exports.getConfigFromJSON = getConfigFromJSON;
 exports.formatStdout = formatStdout;
 exports.formatStdoutFromJSONNmprc = formatStdoutFromJSONNmprc;
 exports.formatJSONToNpmrc = formatJSONToNpmrc;
+exports.m10 = m10;
