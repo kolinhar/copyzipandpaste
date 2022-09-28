@@ -41,7 +41,7 @@ class NpmrcWriter {
     let absolutePath = absolutingPath(rawPath);
 
     if (fs.existsSync(absolutePath)) {
-      const json = this.getConfig();
+      const json = this.getConfig(test);
       const objectToAdd = {
         path: absolutePath,
         save: options.save,
@@ -82,7 +82,7 @@ class NpmrcWriter {
     const absolutePath = absolutingPath(rawPath);
 
     if (checkPathSync(absolutePath)) {
-      const config = this.getConfig();
+      const config = this.getConfig(test);
       config.backupFolder = absolutePath;
       this._setConfig(config, test);
       console.log(`backup folder setted to ${absolutePath}`);
@@ -132,7 +132,7 @@ class NpmrcWriter {
    * @param {boolean} [test]
    */
   static delPath(rawPath, isFile, test = false) {
-    const config = this.getConfig();
+    const config = this.getConfig(test);
     let objectType = '';
 
     if (typeof rawPath === 'number') {
