@@ -95,8 +95,6 @@ function getConfigFromJSON(config) {
   console.log('\nDirectories');
   console.table(config.directories);
 
-  // @TODO: check if there is a backup folder and if it exists
-
   if (!config.backupFolder) {
     console.warn(
       "Be careful, there is no backup folder !\nDon't forget to add one."
