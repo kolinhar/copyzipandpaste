@@ -162,9 +162,14 @@ describe('formatStdout', () => {
 
 describe('formatStdoutFromJSONNmprc', () => {
   it('remove first and last character', () => {
-    assert.deepEqual(formatStdoutFromJSONNmprc(`"{"test": true}"`), {
-      test: true,
-    });
+    assert.deepEqual(
+      formatStdoutFromJSONNmprc(
+        `"{\"path\":\"C:\\\\Users\\\\rjuanes\\\\Documents\\\\K\""`
+      ),
+      {
+        path: 'C:\\Users\\rjuanes\\Documents\\K',
+      }
+    );
   });
 });
 
@@ -174,8 +179,9 @@ describe('formatJSONToNpmrc', () => {
       formatJSONToNpmrc({
         test: true,
         path: 'C:\\Users\\rjuanes\\Downloads',
+        path2: 'E:\\\\',
       }),
-      `"\\"{\\"test\\":true,\\"path\\":\\"C:\\\\Users\\\\rjuanes\\\\Downloads\\"}\\""`
+      `"\\"{\\"test\\":true,\\"path\\":\\"C:\\\\Users\\\\rjuanes\\\\Downloads\\",\\"path2\\":\\"E:\\\\\"}\\""`
     );
   });
 });

@@ -82,13 +82,13 @@ async function cpzs(dryRun) {
   });
 
   // zip temp folder
-  await zipIt();
+  await zipIt(tempDestination, renamedZip);
 
   // send zip archive to its destination
-  await sendZip();
+  await sendZip(finalDestination, renamedZip);
 
   // delete temp folder and its archive
-  await removeTemp();
+  await removeTemp(tempDestination, renamedZip, dryRun);
 
   // deletion all files and folders needed
   await Promise.allSettled([
@@ -99,7 +99,7 @@ async function cpzs(dryRun) {
           //delete file
           return FileMover.removeFile(file.path).then(
             () => {
-              console.log(`file '${file.path}' deleted`);
+              copyLogger(file.path, true);
             },
             (reason) => {
               // maybe deletion could not be permitted for some kind of file (check permissions)
@@ -107,7 +107,7 @@ async function cpzs(dryRun) {
             }
           );
         } else {
-          copyLogger(file.path);
+          copyLogger(file.path, false);
           return Promise.resolve();
         }
       }),
@@ -120,7 +120,7 @@ async function cpzs(dryRun) {
           //delete it
           return FolderMover.removeFolder(directory.path).then(
             () => {
-              console.log(`folder '${directory.path}' deleted`);
+              copyLogger(directory.path, true);
             },
             (reason) => {
               // maybe deletion could not be permitted for some kind of folder (check permissions)
@@ -128,7 +128,7 @@ async function cpzs(dryRun) {
             }
           );
         } else {
-          copyLogger(directory.path);
+          copyLogger(directory.path, false);
           return Promise.resolve();
         }
       }),
@@ -139,7 +139,7 @@ async function cpzs(dryRun) {
  * zip temporary folder
  * @returns {Promise}
  */
-async function zipIt() {
+async function zipIt(tempDestination, renamedZip) {
   console.log(
     `Zipping folder '${getCurrentFolderName(
       tempDestination
@@ -160,7 +160,7 @@ async function zipIt() {
  * copy zipped folder to its final emplacement and remove it from temp folder
  * @returns {Promise}
  */
-async function sendZip() {
+async function sendZip(finalDestination, renamedZip) {
   console.log(`copying archive`);
 
   const dest = `${finalDestination}${path.sep}${getCurrentFolderName(
@@ -182,7 +182,7 @@ async function sendZip() {
  * delete temporaries files and folders
  * @returns {Promise}
  */
-async function removeTemp() {
+async function removeTemp(tempDestination, renamedZip, dryRun) {
   if (!dryRun) {
     return await FileMover.removeFile(`${renamedZip}.zip`).then(
       async () => {
@@ -209,9 +209,14 @@ async function removeTemp() {
 /**
  * log status
  * @param {string} fileFolderPath
+ * @param {boolean|undefined} [opt]
  */
-function copyLogger(fileFolderPath) {
-  console.log(`'${fileFolderPath}' copied`);
+function copyLogger(fileFolderPath, opt) {
+  console.log(
+    `'${fileFolderPath}' ${
+      opt === undefined ? 'copied' : opt ? 'deleted' : 'not deleted'
+    }`
+  );
 }
 
 exports.cpzs = cpzs;

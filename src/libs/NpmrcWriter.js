@@ -40,7 +40,7 @@ class NpmrcWriter {
   static setNewPath(rawPath, options, test = false) {
     let absolutePath = absolutingPath(rawPath);
 
-    if (fs.existsSync(absolutePath)) {
+    if (checkPathSync(absolutePath)) {
       const json = this.getConfig(test);
       const objectToAdd = {
         path: absolutePath,

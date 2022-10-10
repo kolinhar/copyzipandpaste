@@ -6,7 +6,7 @@ const path = require('path');
  * get the last directory of a directory path
  * eg: C:\Users\root\copyzipandpaste --> copyzipandpaste
  * @param {string} folderPath
- * @returns {*|string}
+ * @returns {boolean|string}
  */
 function getCurrentFolderName(folderPath) {
   if (path.isAbsolute(folderPath) === false) {
@@ -22,7 +22,7 @@ function getCurrentFolderName(folderPath) {
  * get the absolute path directory from an absolute file path
  * eg: C:\Users\root\copyzipandpaste\test\utils.js --> C:\Users\root\copyzipandpaste\test
  * @param {string} filePath
- * @returns {*|string}
+ * @returns {boolean|string}
  */
 function getCurrentPathFromFilePath(filePath) {
   if (path.isAbsolute(filePath) === false) {
@@ -41,14 +41,23 @@ function getCurrentPathFromFilePath(filePath) {
  * @returns {string}
  */
 function absolutingPath(rawPath) {
+  console.log(`1 absolutingPath ==> rawPath:`, rawPath);
+
   if (rawPath.charAt(rawPath.length - 1) === path.sep) {
     rawPath = rawPath.slice(0, -1);
   }
 
+  console.log(`2 absolutingPath ==> rawPath:`, rawPath);
+
   if (path.isAbsolute(rawPath) === false) {
-    return path.join(process.cwd(), path.normalize(rawPath));
+    const newPath = path.join(process.cwd(), path.normalize(rawPath));
+    console.log(`3 absolutingPath ==> rawPath:`, newPath);
+    return path.join(newPath);
   }
-  return path.normalize(rawPath);
+
+  const newPath = path.normalize(rawPath);
+  console.log(`4 absolutingPath ==> rawPath:`, newPath);
+  return newPath;
 }
 
 /**
@@ -84,18 +93,18 @@ function checkPathSync(absolutePath) {
 
 /**
  * displays configuration in console
- * @param {Object} config
+ * @param {import('./NpmrcWriter').configObj}
  */
-function getConfigFromJSON(config) {
+function getConfigFromJSON({ files, directories, backupFolder }) {
   console.table({
-    'Backup Folder': config.backupFolder,
+    'Backup Folder': backupFolder,
   });
   console.log('\nFiles');
-  console.table(config.files);
+  console.table(files);
   console.log('\nDirectories');
-  console.table(config.directories);
+  console.table(directories);
 
-  if (!config.backupFolder) {
+  if (!backupFolder) {
     console.warn(
       "Be careful, there is no backup folder !\nDon't forget to add one."
     );
@@ -114,16 +123,35 @@ const formatStdout = (stdout) => stdout.slice(0, -1);
  * @param {string} stdout
  * @returns {Object}
  */
-const formatStdoutFromJSONNmprc = (stdout) =>
-  JSON.parse(stdout.slice(0, -1).slice(1));
+const formatStdoutFromJSONNmprc = (stdout) => {
+  console.log(`raw input\n`, stdout);
+
+  stdout = stdout.slice(0, -1).slice(1);
+  console.log(`\ntry to convert:\n`, stdout);
+
+  return JSON.parse(stdout);
+};
+
+/* @TODO: quand on passe par formatJSONToNpmrc et que backupFolder vaut "E:\\\\\"
+ * si on passe par formatStdoutFromJSONNmprc, backupFolder vaudra "E:\\\" et ça plante le JSON.parse()
+ * de plus, l'affichage de la config dans la console affiche 'E:\\'
+ */
 
 /**
  * format JSON to string storable in npmrc file
- * @param {Object} Json
+ * @param {Object} json
  * @returns {string}
  */
-const formatJSONToNpmrc = (Json) => {
-  return '"' + `"${JSON.stringify(Json)}"`.replaceAll('"', `\\"`) + '"';
+const formatJSONToNpmrc = (json) => {
+  console.log(`\njson\n`, json);
+
+  const jsonStr = JSON.stringify(json);
+  console.log(`\njsonStr\n`, jsonStr);
+
+  const jsonStrReplaced = `"${jsonStr}"`.replaceAll('"', '\\"');
+  console.log(`\njsonStrReplaced\n`, jsonStrReplaced);
+
+  return '"' + jsonStrReplaced + '"';
 };
 
 /**
